@@ -1,0 +1,131 @@
+#! /bin/bash
+# shared initialization of plotting scripts
+
+usage="Usage: $script [-h] [-d <database>] [-e <experiment-name>] [-n <node-id>] [-l <label>] [-a <group-by-in-seconds>] [-q <extra-query>] [-o <output-eps>] [-r] -s <statistic-name>"
+
+# database name defaults to 'simulator.db'
+db="simulator.db"
+# by default, auto-select the experiment
+experiment=""
+# node ID defaults to -1
+node="-1"
+# query defaults to <true>
+query="1"
+# time start defaults to nothing
+start=""
+# time stop defaults to nothing
+stop=""
+# range limitation for the y-axis
+yrange="[*:*]"
+# empty mode -> avg+stddev, min, max
+mode=""
+# stat
+stat=""
+
+# # Absolute path to this script. /home/user/bin/foo.sh
+# script=$(readlink -f $0)
+# # Absolute path this script is in. /home/user/bin
+# path=`dirname $script`
+
+# find the labels script
+labels_sh="$path/util/labels"
+# find the gnuplot setup
+setup_sh="$path/util/plot_setup"
+
+# load utility functions
+source "$path/util/stat_util"
+
+# Add a statistic to the plot
+addStat () {
+	getStatId "$db" "$experiment" "$stat" "$node"
+	
+	getStatUnit "$db" "$statId"
+	unit=$statUnit
+	if test -z "$label"; then
+		getStatLabel "$db" "$statId"
+		label=$statLabel
+	fi
+	
+	dbs[${#dbs[@]}]="$db"
+	stats[${#stats[@]}]="$stat"
+	statIDs[${#statIDs[@]}]="$statId"
+	units[${#units[@]}]="$unit"
+	labels[${#labels[@]}]="$label"
+	
+	label=""
+}
+
+# Parse command line options.
+while getopts hd:a:e:n:l:s:o:t:pq:rv:x:y: OPT; do
+	case "$OPT" in
+		h)
+			echo $usage
+			exit 0
+			;;
+		a)
+			clump="$OPTARG"
+			;;
+		d)
+			db="$OPTARG"
+			;;
+		e)
+			experiment="$OPTARG"
+			;;
+		l)
+			label="$OPTARG"
+			;;
+		m)
+			mode="$OPTARG"
+			;;
+		n)
+			node="$OPTARG"
+			;;
+		o)
+			output="$OPTARG"
+			;;
+		t)
+			title="$OPTARG"
+			;;
+		q)
+			query="${OPTARG//\"/\\\"}"
+			;;
+	   p)
+	      addStat
+	      ;;
+		r)
+			autoRefresh=1
+			;;
+		s)
+			stat="$OPTARG"
+			;;
+		v)
+			yrange="$OPTARG"
+			;;
+		x)
+			start="and time >= '$OPTARG'"
+			;;
+		y)
+			stop="and time < '$OPTARG'"
+			;;
+		[?])
+			# getopts issues an error message
+			echo $usage >&2
+			exit 1
+			;;
+	esac
+done
+
+addStat
+
+# -- check/default params --
+# statistic name is mandatory
+if [ "${#statIDs}" -eq 0 ]; then echo $usage >&2; exit 1; fi
+# title defaults to db, experiment, statistic
+if [ -z "$title" ]; then title="$db    $experiment    ${statistics[0]}"; fi
+
+if [ -z "$autoRefresh" ]
+then
+	plotTail=""
+else
+	plotTail="load \"${path}/util/loop_forever.gnu\""
+fi

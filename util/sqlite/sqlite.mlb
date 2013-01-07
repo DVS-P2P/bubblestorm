@@ -1,0 +1,50 @@
+(*
+** 2007 February 18
+**
+** The author disclaims copyright to this source code.  In place of
+** a legal notice, here is a blessing:
+**
+**    May you do good and not evil.
+**    May you find forgiveness for yourself and forgive others.
+**    May you share freely, never taking more than you give.
+**
+*************************************************************************
+** $Id: sqlite.mlb 5246 2007-02-18 01:08:43Z wesley $
+*)
+ann
+   "warnUnused true"
+   "forceUsed"
+   "nonexhaustiveMatch warn"
+   "redundantMatch warn"
+   "sequenceNonUnit warn"
+in
+   local
+      $(SML_LIB)/basis/basis.mlb
+      $(SML_LIB)/basis/mlton.mlb
+      ../basic/basic.mlb
+      ../fold/fold.mlb
+      ../container/container.mlb
+   
+      prim.sig
+      ann
+         "allowFFI true"
+      in
+         pointers.sml
+         prim.sml
+      end
+
+     (* debug.sml *) (* wraps all the primitive methods to check execution *)
+
+      pair.sml
+      sql.sig
+      query.sml
+      function.sml
+      sql.sml
+   in
+      signature SQL
+
+      structure SQL
+
+      top-level.sml
+   end
+end

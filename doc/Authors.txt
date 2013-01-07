@@ -1,0 +1,10 @@
+Primary BubbleStorm authors:
+  Wesley Terpstra <terpstra@dvs.tu-darmstadt.de>
+  Christof Leng <cleng@dvs.tu-darmstadt.de>
+  Max Lehn <mlehn@dvs.tu-darmstadt.de>
+
+Additional contributors:
+  Marcel Blöcher <bloecher@rbg.informatik.tu-darmstadt.de>
+  Robert Rehner <rehner@dvs.tu-darmstadt.de>
+  Marcel Lucas
+  Andreas Hemel

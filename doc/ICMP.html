@@ -1,0 +1,71 @@
+<html>
+	<head>
+		<title>BubbleStorm: ICMP Support</title>
+	</head>
+	<body>
+		<h1>BubbleStorm: ICMP Support</h1>
+		<p>
+		Sending/receiving ICMP is problematic for two reasons:
+		<ol>
+			<li>It's not portable and we need to use low-level C system APIs</li>
+			<li>On many platforms it requires super-user priveledges.</li>
+		</ol>
+		</p>
+		<p>
+		The best solution (if possible) is access ICMP via direct C FFI.
+		This is possible if users can do SOCK_RAW or the OS provides another
+		way to access related ICMP (linux IP_RECVERR for example).
+		If ICMP send/recv requires super-user access, we need a helper tool.
+		The setuid method spawns child processes to gain the needed access.
+		However, not all systems support setuid (windows). 
+		Then we proxy over a daemon loaded with the required priveledges.
+		</p>
+		<p>
+		If the ICMP support is not set up properly, you will get the message
+		<i>"Unable to use ICMP daemon, ICMP support disabled."</i>.
+		This is not a fatal error. ICMP support will just be disabled.
+		</p>
+		
+		<h2>Setup on Windows</h2>
+		<p>
+		To use ICMP under Windows, you have to build and install the CUSP-ICMP-service.
+		</p>
+		<ol>
+			<li>
+				Go to <i>Middleware/csupport/cusp</i>
+			</li>
+			<li>
+				Run
+				<pre>
+> make
+				</pre> or <pre>
+> make cusp-icmp-svc
+				</pre>
+				to build <i>cusp-icmp-svc.exe</i>
+			<li>
+				Register service, needs administrator privileges:
+				<pre>
+> make service-install
+				</pre>
+				or
+				<pre>
+> sc.exe create CUSP-ICMP binpath= C:\...
+> sc.exe start CUSP-ICMP
+				</pre>
+				<p>Note: <i>C:\...</i> has to be the full path to <i>cusp-icmp-svc.exe</i></p>
+				<p>Note: The space after the equal sign is mandatory!</p>
+			</li>
+			<li>
+				To uninstall the service, run (needs administrator privileges)
+				<pre>
+> make service-uninstall
+				</pre>
+				or
+				<pre>
+> sc.exe stop CUSP-ICMP
+> sc.exe delete CUSP-ICMP
+				</pre>
+			</li>
+		</ol>
+	</body>
+</html>

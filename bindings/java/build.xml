@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="BubbleStorm-Java">
+	<!-- BubbleStorm lib -->
+	<target name="bubblestorm-lib">
+		<ant dir="bubblestorm"/>
+	</target>
+	
+	<!-- CUSP lib -->
+	<target name="cusp-lib">
+		<ant dir="cusp"/>
+	</target>
+	
+	<!-- Javadoc -->
+	<target name="javadoc">
+		<javadoc packagenames="net.bubblestorm.*"
+				excludepackagenames="net.bubblestorm.cusp.async.*"
+				sourcepath="common/src:cusp/src:bubblestorm/src"
+				destdir="javadoc"/>
+	</target>
+	
+	<!-- default target -->
+<!-- 	<target name="build" depends="bubblestorm-lib,cusp-lib,javadoc"/> -->
+	<target name="build" depends="bubblestorm-lib,javadoc"/>
+</project>

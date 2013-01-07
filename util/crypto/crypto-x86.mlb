@@ -1,0 +1,101 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+ann
+   "warnUnused true"
+   "forceUsed"
+   "nonexhaustiveMatch warn"
+   "redundantMatch warn"
+   "sequenceNonUnit warn"
+in
+   local
+      $(SML_LIB)/basis/basis.mlb
+      ../basic/basic.mlb
+      ../hash/hash.mlb
+      ../serial/serial.mlb
+      ../string-ops/string-ops.mlb
+
+      cipher.sig
+      mac.sig
+      cyclic-group.sig
+      compressor.sig
+      hmqv.sig
+      stream.sig
+
+      (* Portable SML implementations of crypto primitives *)
+      aes128ml.sml
+      poly1305ml.sml
+      curve25519.fun
+      field25519ml.sml
+      compressor.fun
+      whirlpool.sml
+      hmqv.fun
+      counter.fun
+
+      local
+         $(SML_LIB)/basis/mlton.mlb
+      in
+         ripemd-160.sml (* Needs MLton.Word.rol *)
+      end
+
+      (* Use FFI to access assembler implementations *)
+      ann
+         "allowFFI true"
+      in
+         local
+            $(SML_LIB)/basis/unsafe.mlb
+            $(SML_LIB)/basis/mlton.mlb
+         in
+            key.fun
+            aes128ffi.sml
+            poly1305ffi.sml
+            field25519ffi-$(TARGET_ARCH).sml
+         end
+      end
+   in
+      signature CIPHER
+      signature COMPRESSOR_RAW
+      signature COMPRESSOR_COOKED
+      signature CYCLIC_GROUP
+      signature MAC
+      signature HMQV
+      signature STREAM
+      
+      structure AES128ML
+      structure Curve25519ML
+      structure RIPEMD160Raw
+      structure RIPEMD160Cooked
+      structure Poly1305ML
+      structure WhirlpoolRaw
+      structure WhirlpoolCooked
+
+      (* Use the faster FFI versions by default *)
+      structure AES128 = AES128FFI
+      structure Poly1305 = Poly1305FFI
+      structure Curve25519 = Curve25519FFI
+
+(*
+      (* Alternative: portable SML versions *)
+      structure AES128 = AES128ML
+      structure Poly1305 = Poly1305ML
+      structure Curve25519 = Curve25519ML
+*)
+      functor Counter
+      functor HMQV
+   end
+end

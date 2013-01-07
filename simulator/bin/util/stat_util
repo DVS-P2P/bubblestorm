@@ -1,0 +1,80 @@
+#!/bin/bash
+#
+# Statistics DB utility functions.
+#
+
+# find the retry script
+retry_sh="$path/util/retry"
+# sqlite command
+sqlite="sqlite3 -init \"$retry_sh\""
+
+getStatId () {
+	# Statistic ID is returned as 'statId' variable.
+	# If experiment name is empty and only one experiment found, then this is auto-set. The name is then returned by 'experimentName'.
+	local db=$1
+	local experiment=$2
+	local stat=$3
+	local node=$4
+	
+	# Confirm database exists
+	if [ ! -f "$db" ]; then
+		echo "Database '$db' did not exist when loading statistic '$stat'" >&2
+		exit 1
+	fi
+	
+	# Confirm the statistic exists (with 1+ matching experiments)
+	local experiments=`${sqlite} "${db}" "select count(distinct s.id) from experiments e join statistics s on e.id=s.experiment where s.name='${stat}' and s.node=${node}" 2>/dev/null`
+	if [ "$experiments" -eq "0" ]; then
+		echo "Database '$db' did not contain statistic '$stat'. Possible choices:" >&2
+		${sqlite} "${db}" "select distinct s.name from experiments e join statistics s on e.id=s.experiment" 2>/dev/null | sed 's/^/  /' >&2
+		echo "---" >&2
+		exit 1
+	fi
+	
+	# Pick the experiment
+	if [ -z "$experiment" ]; then
+		if [ "$experiments" -ne "1" ]; then
+			echo "Database '$db' contains results of ${experiments} experiments. Pick one:" >&2
+			${sqlite} "${db}" "select distinct e.name from experiments e join statistics s on e.id=s.experiment where s.name='${stat}' and s.node=${node}" 2>/dev/null | sed 's/^/  /' >&2
+			echo "---" >&2
+			exit 1
+		else
+			experimentName=`${sqlite} "${db}" "select distinct e.name from experiments e join statistics s on e.id=s.experiment where s.name='${stat}' and s.node=${node}" 2>/dev/null`
+		fi
+		statId=`${sqlite} "${db}" "select distinct s.id from experiments e join statistics s on e.id=s.experiment where s.name='${stat}' and s.node=${node}" 2>/dev/null`
+	else
+		experimentName=$experiment
+		local ids=`${sqlite} "${db}" "select count(distinct s.id) from experiments e join statistics s on e.id=s.experiment where s.name='${stat}' and s.node=${node} and e.name='${experiment}'" 2>/dev/null`
+		if [ "$ids" -ne "1" ]; then
+			echo "Database '$db' contains no '$stat' results for experiment '${experiment}'. Pick one:" >&2
+			${sqlite} "${db}" "select distinct e.name from experiments e join statistics s on e.id=s.experiment where s.name='${stat}' and s.node=${node}" 2>/dev/null | sed 's/^/  /' >&2
+			echo "---" >&2
+			exit 1
+		fi
+		statId=`${sqlite} "${db}" "select distinct s.id from experiments e join statistics s on e.id=s.experiment where s.name='${stat}' and s.node=${node} and e.name='${experiment}'" 2>/dev/null`
+	fi
+}
+
+getStatUnit () {
+	# returns unit for given statistic as 'statUnit'
+	local db=$1
+	local statId=$2
+	statUnit=`${sqlite} "$db" "select units from statistics where id='${statId}'" 2>/dev/null`
+}
+
+getStatLabel () {
+	# returns unit for given statistic as 'statLabel'
+	local db=$1
+	local statId=$2
+	statLabel=`${sqlite} "$db" "select label from statistics where id='${statId}'" 2>/dev/null`
+}
+
+getStatLabelUnit () {
+	# returns label and unit (if specified) for given statistic as 'statLabelUnit'
+	local db=$1
+	local statId=$2
+	getStatLabel "$db" "$statId"
+	getStatUnit "$db" "$statId"
+	statLabelUnit="$statLabel"
+	if [ ! -z "$statUnit" ]; then statLabelUnit="${statLabelUnit} (${statUnit})"; fi
+}

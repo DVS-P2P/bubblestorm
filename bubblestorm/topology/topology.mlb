@@ -1,0 +1,101 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+local
+   $(SML_LIB)/basis/basis.mlb
+   ../../util/util.mlb
+   ../../system/$(BS_RUNTIME).mlb
+   ../../cusp/cusp.mlb
+   ../config/config.mlb
+in
+   ann
+      "warnUnused true"
+      "forceUsed"
+      "nonexhaustiveMatch warn"
+      "redundantMatch warn"
+      "sequenceNonUnit warn"
+   in
+      local
+         measurement.sig
+
+         config/protocol.sml
+         config/limits.sml
+
+         state/neighbour.sig
+         state/neighbour.sml
+         state/clients.sig
+         state/clients.sml
+         state/location.sig
+         state/location.sml
+         state/locations.sig
+         state/locations.sml
+         state/round-hash.sml
+         state/gossip.sig
+         state/gossip.fun
+         state/gossip.sml
+         public/measurement.sml
+         state/state.sml
+
+         handlers/handlers.sml
+         actions/actions.sml
+
+         handlers/bootstrap.sml
+         handlers/bootstrap-ok.sml
+         handlers/bubblecast.sml
+         handlers/find-server.sml
+         handlers/found-bootstrap.sml
+         handlers/found-client.sml
+         handlers/found-slave.sml
+         handlers/gossip.sml
+         handlers/leave-client.sml
+         handlers/leave-master.sml
+         handlers/leave-slave.sml
+         handlers/make-client.sml
+         handlers/make-slave.sml
+         handlers/upgrade.sml
+         handlers/upgrade-ok.sml
+         handlers/yes-server.sml
+         handlers/yes-master.sml
+
+         actions/bubblecast.sml
+         actions/contact-client.sml
+         actions/contact-slave.sml
+         actions/create.sml
+         actions/evaluate.sml
+         actions/evaluateN.sml
+         actions/flush-clients.sml
+         actions/join.sml
+         actions/make-methods.sml
+         actions/push-fish.sml
+         actions/start-gossip.sml
+         actions/start-walk.sml
+         actions/upgrade.sml
+
+         topology.sig
+         public/recursion.sml
+         public/topology.sml
+      in
+         signature ID
+         signature MEASUREMENT
+         signature TOPOLOGY
+         structure ID
+         structure Measurement
+         structure Topology
+      end
+   end
+end

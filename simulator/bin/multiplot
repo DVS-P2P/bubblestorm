@@ -1,0 +1,32 @@
+#! /bin/bash
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+command=$(readlink -f $0)
+# Absolute path this script is in, e.g. /home/user/bin
+path=`dirname $command`
+# Basemame of this script, e.g. foo
+script=`basename $command`
+# init
+source $path/util/plot_init
+
+doit () {
+cat << EOF
+set xdata time
+set format x "%H:%M"
+set xlabel "Simulated time"
+set ylabel "${units[0]}"
+EOF
+
+source $setup_sh
+$labels_sh "${dbs[0]}" "${statIDs[0]}"
+echo -n "plot "
+for ls in `seq 1 ${#statIDs[@]}`; do
+  let i=ls-1
+  echo -n "f(\"${dbs[$i]}\", \"${statIDs[$i]}\", \"avg, var\") using 1:2:(sqrt(\$3)) with errorbars ls 9 notitle, "
+  echo -n "f(\"${dbs[$i]}\", \"${statIDs[$i]}\", \"avg\") using 1:2 with lines ls $ls title \"${labels[$i]}\""
+  if [ $ls -ne "${#statIDs[@]}" ]; then echo -n ", "; fi
+done
+echo ""
+echo "$plotTail"
+}
+
+doit | gnuplot -persist

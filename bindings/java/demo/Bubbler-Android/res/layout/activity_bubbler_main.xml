@@ -1,0 +1,60 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true" >
+
+    <ToggleButton
+        android:id="@+id/buttonBubblerService"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:onClick="onServiceButtonClick"
+        android:text="Bubbler Service" />
+
+    <Button
+        android:id="@+id/buttonSubscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/buttonBubblerService"
+        android:onClick="onSubscribeClick"
+        android:text="Subscribe" />
+
+    <EditText
+        android:id="@+id/editSubscribe"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/buttonSubscribe"
+        android:ems="10" />
+
+    <EditText
+        android:id="@+id/editPublish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editSubscribe"
+        android:layout_below="@+id/buttonSubscribe"
+        android:ems="10" />
+
+    <Button
+        android:id="@+id/buttonPublish"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignTop="@+id/editPublish"
+        android:onClick="onPublishClick"
+        android:text="Publish" />
+
+    <TextView
+        android:id="@+id/textMessageLog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/editPublish"
+        android:layout_below="@+id/buttonPublish"
+        android:maxLines="10"
+        android:scrollbarAlwaysDrawVerticalTrack="true"
+        android:text="(Log)" />
+
+</RelativeLayout>

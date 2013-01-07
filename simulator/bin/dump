@@ -1,0 +1,79 @@
+#! /bin/bash
+#
+# Outputs the average value of a given statistic over a given time interval.
+#
+
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+command=$(readlink -f $0)
+# Absolute path this script is in, e.g. /home/user/bin
+path=`dirname $command`
+# Basemame of this script, e.g. foo
+script=`basename $command`
+
+usage="Usage: $script [-h] [-d <database>] [-e <experiment-name>] [-l] [-q <extra-query>] -s <dump-name>"
+
+# load utility functions
+source "$path/util/dump_util"
+
+# default params
+db="simulator.db"
+experiment=""
+dumpName=""
+extraQuery="1"
+
+# Parse command line options.
+while getopts hd:e:s:lq: OPT; do
+	case "$OPT" in
+		h)
+			echo $usage
+			exit 0
+			;;
+		d)
+			db="$OPTARG"
+			;;
+		e)
+			experiment="$OPTARG"
+			;;
+		s)
+			dumpName="$OPTARG"
+			;;
+		l)
+			latestEntry="1"
+			;;
+		q)
+			extraQuery="${OPTARG//\"/\\\"}"
+			;;
+		[?])
+			# getopts issues an error message
+			echo $usage >&2
+			exit 1
+			;;
+	esac
+done
+
+# dump name is mandatory
+if [ -z "$dumpName" ]; then echo $usage >&2; exit 1; fi
+
+getDumpInfo  "$db" "$experiment" "$dumpName"
+
+# query="select time, text from dump_data where dump=${dumpId} and ${extraQuery}"
+if [ -z "$latestEntry" ]; then
+	times=`${sqlite} "$db" "select distinct time from dump_data where dump=${dumpId} and ${extraQuery};"`
+else
+# 	query="${query} order by time desc limit 1"
+	times=`${sqlite} "$db" "select max(time) from dump_data where dump=${dumpId} and ${extraQuery};"`
+fi
+
+if [ -z "$times" ]; then
+	echo "No data."
+	exit 1
+fi
+
+IFS=$'\x0a'
+for t in ${times}; do
+	echo "--- $t ---"
+	echo ${dumpPrefix}
+# 	${sqlite} -csv "${db}" "select text from dump_data where dump=${dumpId} and time='${t}';"
+	sqlite3 -init \"$retry_sh\" "${db}" "select text from dump_data where dump=${dumpId} and time='${t}';"
+	echo ${dumpSuffix}
+done

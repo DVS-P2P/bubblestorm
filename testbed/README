@@ -1,0 +1,72 @@
+0. Befehlsübersicht
+1. Installation/Update des Testbeds
+2. Konfiguration/Durchführung eines Experiments
+
+
+0. Befehlsübersicht
+
+    run.sh
+        Startet den Master. Mögliche flags:
+        "--optimized" startet den Python Interpreter mit -OO 
+        "--find-python" sucht den neusten Python Interpreter der Systemweit installiert ist und benutzt diesen. Wird dieses flag nicht gesetzt, wird der Interpreter aus $USE_PYTHON_BIN benutzt
+
+    python -m testbed.init
+        Initialisiert im aktuellem Arbeitsverzeichnis die Ordnerstruktur für ein Testbed
+    
+    python -m testbed.scripts.PLCAPI
+        Kommuniziert mit PlanetLab/GermanLab. Kann benutzt werden, um die nodes eines slices in die DB des Testbeds einzutragen
+        
+    python -m testbed.scripts.PrepareSSH
+        Testet die Verbidung zu den Hosts eines Testbeds und schreibt die gefundenen ssh-public-keys in die known_hosts datei.
+    
+
+
+1. Installation/Update des Testbeds
+
+	Das Testbed wird als Setuptools-Paket in die Pythonumgebung installiert. Dies kann entweder lokal (per virtualenv), oder global durchgeführt werden.
+
+	[BUILD]
+		Zum Bauen des Setuptools-Paket muss './setup.py sdist' ausgeführt werden. In 'dist/Testbed-rev-#####.tar.gz' befindet sich dann die neuste Version des Paketes. 
+
+	[INSTALL]
+		Das Paket muss in die Pythonumgebung installiert werden. Dies kann entweder systemweit, oder beschränkt auf eine lokale Umgebung (virtualenv) erfolgen. 
+
+		Systemweit:
+			'pip install Testbed-rev-#####.tar.gz'
+
+		Lokale Umgenung:
+			Zunächst muss eine lokale Umgebung erstellt werden:
+			'virtualenv .env'
+			'. .env/bin/activate'
+			'pip install Testbed-rev-#####.tar.gz'
+
+
+
+2. Konfiguration/Durchführung eines Experiments
+
+	[SETUP]
+		Um ein neues Experiment zu initialisieren (im aktuellem Arbeitsverzeichnis), wird das init Script aufgerufen:
+		'python -m testbed.init'
+		bzw wenn die lokale Umgebung nicht richtig gesetzt ist: './.env/bin/python -m testbed.init'
+
+		Im aktuellem Arbeitsverzeichnis befinden sich jetzt:
+			Makefile
+			sql/*.sql
+			run.sh
+
+	[CONFIG]
+		PlanetLab/GermanLab Konfiguration:
+		
+		python -m testbed.scripts.PLCAPI
+            Kommuniziert mit PlanetLab/GermanLab. Kann benutzt werden, um die nodes eines slices in die DB des Testbeds einzutragen.
+            
+		python -m testbed.scripts.PrepareSSH
+            Testet die Verbidung zu den Hosts eines Testbeds und schreibt die gefundenen ssh-public-keys in die known_hosts datei.
+            Vorsicht: bereits vorhandene Einträge in der knownHosts Datei werden durch neue Werte ersetzt!
+
+	[RUN]
+		Zunächst muss per 'make experiment.db' die Datenbank erstellt werden.
+
+		Das Testbed wird nun analog zum Simulator verwendet:
+
+		'./run.sh -d ... -e ...'

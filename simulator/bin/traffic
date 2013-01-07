@@ -1,0 +1,48 @@
+#! /bin/bash
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+command=$(readlink -f $0)
+# Absolute path this script is in, e.g. /home/user/bin
+path=`dirname $command`
+# Basemame of this script, e.g. foo
+script=`basename $command`
+
+# load all traffic types
+#OFS="$IFS"
+#IFS="
+#"
+#for stat in `$path/statnames | grep ^sent/`; do
+#  statistics[${#statistics[@]}]="$stat"
+#done
+#IFS="$OFS"
+
+# init
+source $path/util/plot_init
+
+statistics[${#statistics[@]}]="sent/topology/upgrade"
+statistics[${#statistics[@]}]="sent/topology/bootstrap"
+
+doit () {
+cat << EOF
+set boxwidth 0.75 absolute
+set style fill solid 1.00
+set style histogram rowstacked
+set style data histograms
+
+#set xdata time
+#set timefmt "%Y-%m-%d %H:%M:%S"
+set xlabel "Simulated time"
+set ylabel "${units[0]}"
+EOF
+
+source $setup_sh
+echo -n "plot "
+for ls in `seq 1 ${#statIDs[@]}`; do
+  let i=ls-1
+  echo -n "f(\"${dbs[$i]}\",\"${statIDs[$i]}\",\"sum\") using 2 ls $ls title \"${labels[$i]}\""
+  if [ $ls -ne "${#statIDs[@]}" ]; then echo -n ", "; fi
+done
+echo ""
+echo "$plotTail"
+}
+
+doit | gnuplot -persist

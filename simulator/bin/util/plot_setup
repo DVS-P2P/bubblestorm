@@ -1,0 +1,57 @@
+#!/bin/bash
+# create the (optionally time-aggreageted) query by statistic
+if [ -z "$clump" ];  then cat <<EOF
+  g(i)="select\
+          time, count,\
+          min, max,\
+          sum, sum2,\
+          sum/count as avg,\
+          (count*sum2-sum*sum)/(count*count) as var\
+        from measurements\
+        where statistic=".i." and ${query}"
+EOF
+else cat << EOF
+  g(i)="select\
+          max(time) as time, sum(count) as count,\
+          min(min) as min, max(max) as max,\
+          sum(sum) as sum, sum(sum2) as sum2,\
+          sum(sum)/sum(count) as avg,\
+          (sum(count)*sum(sum2)-sum(sum)*sum(sum))/(sum(count)*sum(count)) as var\
+        from measurements\
+        where statistic=".i." and ${query}\
+        group by round(strftime('%J',time)*24*60*60/$clump)"
+EOF
+fi
+
+cat <<EOF
+f(d,i,mode)="< sqlite3 -csv -init $retry_sh ".d." \"select time, ".mode." from (".g(i).")\""
+h(d,i)="< sqlite3 -csv -init $retry_sh ".d." \"select bucket, 1.0*sum(count)/(select sum(count) from histograms where statistic=".i." and ${query}) from histograms where statistic=".i." ${start} ${stop} and ${query} group by bucket\""	
+timeline(db,stat,start,stop)="< sqlite3 -csv ".db." \"select label, sum(sum)/sum(count) as avg, cast (substr(name, length('".stat."')+2) as int) as step from statistics join measurements where name like '".stat."/%' and id = statistic ".start." ".stop." group by id order by step;\""
+
+set termoption enhanced
+set datafile separator ","
+set timefmt "%Y-%m-%d %H:%M:%S"
+set grid
+set yrange $yrange
+
+set style line 1 lc rgb "red"
+set style line 2 lc rgb "blue"
+set style line 3 lc rgb "green"
+set style line 4 lc rgb "pink"
+set style line 5 lc rgb "cyan"
+set style line 6 lt 1 lw 3 lc rgb "red"
+set style line 9 lc rgb "grey" pt "none"
+set style line 10 lc rgbcolor "#EE7A34"
+set style arrow 10 nohead ls 10
+EOF
+
+if test -n "$output"; then
+cat <<EOF
+set terminal postscript eps color lw 1 solid font "Helvetica,13" size 12cm,6cm
+set output "$output"
+EOF
+else
+cat <<EOF
+set title "$title"
+EOF
+fi

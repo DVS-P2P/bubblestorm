@@ -1,0 +1,69 @@
+<html>
+	<head>
+		<title>CUSP for C++ quick start</title>
+	</head>
+	<body>
+		<h1>CUSP for C++ quick start</h1>
+
+		<h2>Linux</h2>
+
+		<h3>Prerequisites</h3>
+
+		<b>MLton compiler</b>
+		<ul>
+			<li>Debian/Ubuntu: <i>mlton</i> (version 20100608 or better)</li>
+		</ul>
+
+		<b>SQLite library</b>
+		<ul>
+			<li>Debian/Ubuntu: <i>sqlite3</i></li>
+			<li>Gentoo: <i>dev-db/sqlite</i></li>
+		</ul>
+
+
+		<h3>Build the CUSP C bindings</h3>
+
+		<pre>
+cd &lt;Bubblestorm root&gt;/bindings/c/cusp
+make
+		</pre>
+		This will create <i>libcusp.so</i>.
+
+
+		<h3>Build the CUSP C++ bindings</h3>
+
+		<pre>
+cd &lt;Bubblestorm root&gt;/bindings/cpp/cusp
+make
+		</pre>
+		This will create <i>libcuspcpp.a</i>.
+
+
+		<h3>Build and run the CUSP C++ demos</h3>
+
+		<pre>
+cd &lt;Bubblestorm root&gt;/bindings/cpp/cusp/demo
+make
+		</pre>
+		This will create <i>client</i> and <i>server</i>.
+
+		Run the server (listening at port 8585):
+		<pre>
+./server
+		</pre>
+
+		Run the client (using default port 8586 and connecting to localhost):
+		<pre>
+./client
+		</pre>
+
+		<p>
+		For running the demos, <i>libcusp.so</i> needs to be placed in the library search path.
+		For testing purposes, you can manually override <i>LD_LIBRARY_PATH</i>, e.g.,
+			<pre>
+LD_LIBRARY_PATH=../../../c/cusp ./client
+			</pre>
+		</p>
+
+	</body>
+</html>

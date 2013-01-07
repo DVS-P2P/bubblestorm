@@ -1,0 +1,97 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+local
+   $(SML_LIB)/basis/basis.mlb
+   $(SML_LIB)/basis/mlton.mlb
+in
+   ../util/util.mlb
+
+   ann
+      "warnUnused true"
+      "forceUsed"
+      "nonexhaustiveMatch warn"
+      "redundantMatch warn"
+      "sequenceNonUnit warn"
+   in
+      address.sig
+      entropy.sig
+      sigpoll.sig
+
+      entropy.sml
+      (* sigpoll.sml *)
+
+      ann
+         "allowFFI true"
+      in
+         entropy-mlton.sml
+         sigpoll-mlton.sml
+      end
+
+      time.sig
+      time.sml
+      event.sig
+      event.fun
+      main.sig
+      main.sml
+
+      udp/icmp.sig
+      udp/native-udp.sig
+      udp/buffered-udp.sig
+      udp/peered-udp.sig
+      udp/buffer-udp.fun
+      udp/peer-udp.fun
+      udp/ipv4.sml
+      udp/icmp4-ctl.sml
+      udp/icmp4-daemon.sml
+      udp/icmp4-null.sml
+      ann
+         "allowFFI true"
+      in
+         udp/icmp4-ffi.sml
+         udp/icmp4-setuid.sml
+      end
+      udp/icmp4.sml
+      udp/udp4.sml
+
+      log/log-levels.sml
+      log/log-writer.sig
+      log/print-buffer.sml
+      log/stdout-writer.sml
+      log/stdout-node-writer.sml
+      log/sqlite-writer.fun
+      log/log.sig
+      log/log.fun
+      log/simultaneous-dump.sig
+      log/config-command-line.sig
+      log/config-command-line.sml
+      
+      statistics/statistics.sig
+      statistics/statistics-helper.sig
+      statistics/collector.sig
+      statistics/collector.sml
+      statistics/histogram.sig
+      statistics/histogram.sml
+      statistics/statistics-writer.sig
+      statistics/statistics-stdout.fun
+      statistics/statistics-sqlite.fun
+      statistics/statistics.fun
+      statistics/timeline-statistics.sig
+      statistics/timeline-statistics.fun
+   end
+end

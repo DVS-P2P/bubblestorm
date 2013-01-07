@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="BSBase-Jni">
+	<property name="target" value="1.6"/>
+	<property name="source" value="1.6"/>
+	<path id="source">
+		<pathelement location="src"/>
+	</path>
+	<path id="classpath">
+		<pathelement location="bin"/>
+	</path>
+	<property name="bubblestorm.dir" value="../../c/bubblestorm"/>
+	
+	<target name="init">
+		<mkdir dir="bin"/>
+	</target>
+	<target name="clean">
+		<delete dir="bin"/>
+		<delete file="main-jni.h"/>
+	</target>
+	
+	<target name="build-java" depends="init">
+		<echo message="Building java classes"/>
+		<javac destdir="bin" source="${source}" target="${target}" includeantruntime="false">
+			<classpath path="bin"/>
+			<src path="src"/>
+		</javac>
+	</target>
+	<target name="jni-header" depends="build-java">
+		<echo message="Creating Base JNI header"/>
+		<javah class="net.bubblestorm.jni.BSJniBase" outputFile="main-jni.h">
+			<classpath path="bin"/>
+		</javah>
+	</target>
+	<target name="build" depends="jni-header"/>
+</project>

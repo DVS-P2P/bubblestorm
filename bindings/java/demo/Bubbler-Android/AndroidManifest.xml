@@ -1,0 +1,36 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="net.bubblestorm.bubbler.android"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="15" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name=".frontend.BubblerMainActivity"
+            android:label="@string/title_activity_bubbler_main" >
+            <intent-filter>
+                <action android:name="net.bubblestorm.bubbler.android.MESSAGE" />
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".BubblerService"
+            android:label="Bubbler Service"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="net.bubblestorm.bubbler.android.PUBLISH" />
+                <action android:name="net.bubblestorm.bubbler.android.SUBSCRIBE" />
+            </intent-filter>
+        </service>
+    </application>
+
+</manifest>

@@ -1,0 +1,84 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+ann
+   "warnUnused true"
+   "forceUsed"
+   "nonexhaustiveMatch warn"
+   "redundantMatch warn"
+   "sequenceNonUnit warn"
+in
+   local
+      $(SML_LIB)/basis/basis.mlb
+
+      order.sig
+      order.fun
+      once.sig
+      once.sml
+      lazy.sml
+      iterator.sig
+      iterator.sml
+      signal.sig
+      signal.sml
+      weak.sig
+      word-to-string.sml
+      make-vector.sig
+      (* make-vector.sml (* Portable SML version *) *)
+
+      local
+         $(SML_LIB)/basis/mlton.mlb
+      in
+         at.sml   (* Needs MLton.Exn.addExnMessager *)
+         weak.sml (* Needs MLton.Weak *)
+      end 
+
+      local 
+         $(SML_LIB)/basis/unsafe.mlb (* used by mlton-pack.sml *)
+      in
+         ann
+            "allowPrim true"
+         in
+            make-vector-mlton.sml (* Needs MLton Array_toVector prim *)
+                                  (* Needs Unsafe from *)
+         end
+      end
+   in
+      signature ITERATOR
+      signature MAKE_VECTOR
+      signature ORDER
+      signature ORDER_FROM_COMPARE
+      signature ORDER_FROM_LESS_EQUAL
+      signature ONCE
+      signature SIGNAL
+      signature WEAK
+
+      structure Iterator
+      structure Lazy
+      structure MakeVector
+      structure OncePerThread
+      structure OncePerEntry
+      structure Signal
+      structure Weak
+      structure WordToString
+
+      functor OrderFromCompare
+      functor OrderFromLessEqual
+
+      top-level.sml
+   end
+end

@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ $# -gt 0 ];then
+   DB="$1"
+else
+   DB="simulator.db"
+fi
+sqlite3 $DB "select distinct(name) from dumps;"

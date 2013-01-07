@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="src-core"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BubbleStorm-Jni"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/CUSP-Jni"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/BSBase-Jni"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.2.jar"/>
+	<classpathentry kind="lib" path="/usr/share/swt-3.7/lib/swt.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

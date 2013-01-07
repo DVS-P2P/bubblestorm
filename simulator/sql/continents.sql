@@ -1,0 +1,11 @@
+INSERT INTO "continents" VALUES(1,'Balkans');
+INSERT INTO "continents" VALUES(2,'North America');
+INSERT INTO "continents" VALUES(3,'Africa');
+INSERT INTO "continents" VALUES(4,'Oceania');
+INSERT INTO "continents" VALUES(5,'Latin America');
+INSERT INTO "continents" VALUES(6,'South Asia');
+INSERT INTO "continents" VALUES(7,'S.E. Asia');
+INSERT INTO "continents" VALUES(8,'East Asia');
+INSERT INTO "continents" VALUES(9,'Europe');
+INSERT INTO "continents" VALUES(10,'Central Asia');
+INSERT INTO "continents" VALUES(11,'Middle East');

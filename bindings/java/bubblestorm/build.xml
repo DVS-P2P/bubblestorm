@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="BS-Jni">
+	<property name="target" value="1.6"/>
+	<property name="source" value="1.6"/>
+	<path id="source">
+		<pathelement location="src"/>
+	</path>
+	<path id="classpath">
+		<pathelement location="bin"/>
+		<pathelement location="../cusp/bin"/>
+		<pathelement location="../common/bin"/>
+	</path>
+	<property name="cusp.dir" value="../../c/cusp"/>
+	<property name="bubblestorm.dir" value="../../c/bubblestorm"/>
+	
+	<!-- OS detection -->
+	<condition property="isUnix">
+		<and>
+			<os family="unix" />
+			<not>
+				<os family="mac" />
+			</not>
+		</and>
+	</condition>
+	<condition property="isWindows">
+		<os family="windows" />
+	</condition>
+	<condition property="isMac">
+		<os family="mac" />
+	</condition>
+	
+	<target name="init">
+		<mkdir dir="bin"/>
+	</target>
+	<target name="clean">
+		<delete dir="bin"/>
+		<delete file="bs-jni.h"/>
+		<delete file="libbsjni.so"/>
+		<delete file="libbsjni.jnilib"/>
+		<delete file="bsjni.dll"/>
+	</target>
+	
+	<target name="common">
+		<ant dir="../common" target="jni-header"/>
+	</target>
+	<target name="cusp">
+		<ant dir="../cusp" target="jni-header"/>
+	</target>
+	
+	<target name="build-java" depends="init,common,cusp">
+		<echo message="Building java classes"/>
+		<javac destdir="bin" source="${source}" target="${target}" includeantruntime="false">
+			<classpath refid="classpath"/>
+			<src refid="source"/>
+		</javac>
+	</target>
+	<target name="jni-header" depends="build-java">
+		<echo message="Creating BubbleStorm JNI header"/>
+		<javah class="net.bubblestorm.jni.BSJni" outputFile="bs-jni.h">
+			<classpath refid="classpath"/>
+		</javah>
+	</target>
+	<target name="jni-lib-unix" if="isUnix" depends="jni-header,common">
+		<echo message="Building BubbleStorm JNI library (Linux/Unix)"/>
+		<exec executable="gcc">
+			<arg line="bs-jni.c"/>
+			<arg line="-Wall"/>
+			<arg line="-shared"/>
+			<arg line="-fPIC"/>
+			<arg line="-DLIBRARY_NAME=bubblestorm"/>
+			<arg line="-I'${java.home}/../include'"/>
+			<arg line="-I'${java.home}/../include/linux'"/>
+			<arg line="-I${bubblestorm.dir}"/>
+			<arg line="-I${cusp.dir}"/>
+			<arg line="-L${bubblestorm.dir}"/>
+			<arg line="-lbubblestorm"/>
+			<arg line="-o libbsjni.so"/>
+		</exec>
+	</target>
+	<target name="jni-lib-windows" if="isWindows" depends="jni-header,common">
+		<echo message="Building BubbleStorm JNI library (Windows)"/>
+		<exec executable="gcc">
+			<arg line="bs-jni.c"/>
+			<arg line="-Wall"/>
+			<arg line="-shared"/>
+			<arg line="-Wl,--kill-at"/>
+			<arg line="-D_JNI_IMPLEMENTATION_"/>
+			<arg line="-DLIBRARY_NAME=bubblestorm"/>
+			<arg line="-I'${java.home}/../include'"/>
+			<arg line="-I'${java.home}/../include/win32'"/>
+			<arg line="-I${bubblestorm.dir}"/>
+			<arg line="-I${cusp.dir}"/>
+			<arg line="-L${bubblestorm.dir}"/>
+			<arg line="-lbubblestorm"/>
+			<arg line="-lws2_32"/>
+			<arg line="-o bsjni.dll"/>
+		</exec>
+	</target>
+	<target name="jni-lib-mac" if="isMac" depends="jni-header,common">
+		<echo message="Building BubbleStorm JNI library (Mac OS X)"/>
+		<exec executable="gcc">
+			<arg line="bs-jni.c"/>
+			<arg line="-Wall"/>
+			<arg line="-dynamiclib"/>
+			<arg line="-m64"/>
+			<arg line="-fPIC"/>
+			<arg line="-DLIBRARY_NAME=bubblestorm"/>
+			<arg line="-I'${java.home}/include'"/>
+			<arg line="-I${bubblestorm.dir}"/>
+			<arg line="-I${cusp.dir}"/>
+			<arg line="-L${bubblestorm.dir}"/>
+			<arg line="-lbubblestorm"/>
+			<arg line="-o libbsjni.jnilib"/>
+		</exec>
+	</target>
+	<target name="jni-lib" depends="jni-lib-unix,jni-lib-mac,jni-lib-windows"/>
+	
+	<target name="build" depends="build-java,jni-lib"/>
+	
+	<target name="runtest" depends="build">
+		<java classname="net.bubblestorm.demo.BSTest" failonerror="true" fork="yes">
+			<classpath refid="classpath"/>
+			<env key="LD_LIBRARY_PATH" value=".:${bubblestorm.dir}"/>
+			<env key="PATH" value=".;${bubblestorm.dir}"/>
+			<!-- Mac OS X:			<env key="DYLD_LIBRARY_PATH" value=".:${bubblestorm.dir}"/> -->
+			<arg line="${args}"/>
+		</java>
+	</target>
+</project>

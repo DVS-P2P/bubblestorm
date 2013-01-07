@@ -1,0 +1,37 @@
+#! /bin/bash
+
+dir=`dirname "$0"`
+# expand dir name (Windows does not like "../")
+dir=`cd $dir && pwd`
+
+mlton=`which mlton`
+eval `grep "^lib=" "${mlton}"`
+
+declare -a rargs
+case "$1" in
+@MLton)
+        shift
+        while [ "$#" -gt 0 -a "$1" != "--" ]; do
+                rargs[${#rargs[@]}]="$1"
+                shift
+        done
+        if [ "$#" -gt 0 -a "$1" == "--" ]; then
+                shift
+        else
+                echo '@MLton missing --'
+                exit 1
+        fi
+        ;;
+esac
+
+export MLTON_LIB_DIR="$lib"
+exec ${mlton} @MLton "${rargs[@]}" -- \
+	-ar-script "$dir/static-library" \
+	-mlb-path-map "$dir/native-runtime" \
+	-target-link-opt linux  "-L$dir/linux" \
+	-target-link-opt darwin "-L$dir/darwin" \
+	-target-link-opt mingw  "-L$dir/mingw" \
+	-target-link-opt amd64  "-lbs-asm-amd64" \
+	-target-link-opt x86    "-lbs-asm-x86" \
+	-target-link-opt arm    "-lbs-asm-arm" \
+	"$@"

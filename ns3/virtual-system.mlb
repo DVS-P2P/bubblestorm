@@ -1,0 +1,61 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+local
+   $(SML_LIB)/basis/basis.mlb
+   $(SML_LIB)/basis/mlton.mlb
+   ../system/sources.mlb
+   ../system/native.mlb
+   ../cusp/sources.mlb
+in
+   ann
+      "allowFFI true"
+      "warnUnused true"
+      "forceUsed"
+      "nonexhaustiveMatch warn"
+      "redundantMatch warn"
+      "sequenceNonUnit warn"
+   in
+      local
+         (* Node *)
+         node.sml
+         simulator-command-line.sml
+         
+         (* Eventing, Main *)
+         node-event.sml
+         simulator-main.sml
+         
+         (* Log *)
+         node-log.fun
+         
+         (* Entropy *)
+         ../system/entropy-mlton.sml (* FIXME!? *)
+         
+         (* Networking *)
+         address-extra.sig
+         address.sml
+         node-udp.sml
+      in
+         host-cache.sml (* TODO proper implementation *)
+         signature MAIN
+         structure Entropy
+         structure SimultaneousDump
+         sim-ns3.sml
+      end
+   end
+end

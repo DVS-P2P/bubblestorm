@@ -1,0 +1,5 @@
+ BubbleStorm for Android (ARM)
+-------------------------------
+
+The Makefile in this folder builds dynamic libraries of SQLite3 (libsqlite3.so) and BubbleStorm (libbubblestorm.so) for Android.
+Requirement is a GCC toolchain for Android (particularly arm-linux-androideabi-gcc) installed in a folder contained in the PATH variable.

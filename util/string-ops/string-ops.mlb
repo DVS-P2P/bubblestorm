@@ -1,0 +1,44 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+ann
+   "warnUnused true"
+   "forceUsed"
+   "nonexhaustiveMatch warn"
+   "redundantMatch warn"
+   "sequenceNonUnit warn"
+in
+   local
+      $(SML_LIB)/basis/basis.mlb
+
+      copy.sig
+      crc32.sig
+      (* copy.sml *)
+      ann
+         "allowFFI true"
+      in
+         copy-mlton.sml
+         crc32-mlton.sml
+      end
+   in
+      signature COPY
+
+      structure Copy
+      structure CRC32
+   end
+end

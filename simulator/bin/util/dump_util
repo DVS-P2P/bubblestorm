@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# Dump DB utility functions.
+#
+
+# find the retry script
+retry_sh="$path/util/retry"
+# sqlite command
+sqlite="sqlite3 -init \"$retry_sh\""
+
+getDumpInfo () {
+	# Dump ID is returned as 'dumpId' variable, prefix as 'dumpPrefix', and suffix as 'dumpSuffix'.
+	# If experiment name is empty and only one experiment found, then this is auto-set. The name is then returned by 'experimentName'.
+	local db=$1
+	local experiment=$2
+	local dump=$3
+	
+	# Confirm database exists
+	if [ ! -f "$db" ]; then
+		echo "Database '$db' did not exist when loading dump '$dump'" >&2
+		exit 1
+	fi
+	
+	# Confirm the dump exists (with 1+ matching experiments)
+	local experiments=`${sqlite} "${db}" "select count(distinct s.id) from experiments e join dumps s on e.id=s.experiment where s.name='${dump}'" 2>/dev/null`
+	if [ "$experiments" -eq "0" ]; then
+		echo "Database '$db' did not contain dump '$dump'. Possible choices:" >&2
+		${sqlite} "${db}" "select distinct s.name from experiments e join dumps s on e.id=s.experiment" 2>/dev/null | sed 's/^/  /' >&2
+		echo "---" >&2
+		exit 1
+	fi
+	
+	# Pick the experiment
+	if test -z "$experiment"; then
+		if [ "$experiments" -ne "1" ]; then
+			echo "Database '$db' contains results of ${experiments} experiments. Pick one:" >&2
+			${sqlite} "${db}" "select distinct e.name from experiments e join dumps s on e.id=s.experiment where s.name='${dump}'" 2>/dev/null | sed 's/^/  /' >&2
+			echo "---" >&2
+			exit 1
+		else
+			experimentName=`${sqlite} "${db}" "select distinct e.name from experiments e join dumps s on e.id=s.experiment where s.name='${dump}'" 2>/dev/null`
+		fi
+		dumpId=`${sqlite} "${db}" "select distinct s.id from experiments e join dumps s on e.id=s.experiment where s.name='${dump}'" 2>/dev/null`
+	else
+		local ids=`${sqlite} "${db}" "select count(distinct s.id) from experiments e join dumps s on e.id=s.experiment where s.name='${dump}' and e.name='${experiment}'" 2>/dev/null`
+		if [ "$ids" -ne "1" ]; then
+			echo "Database '$db' contains no '$dump' results for experiment '${experiment}'. Pick one:" >&2
+			${sqlite} "${db}" "select distinct e.name from experiments e join dumps s on e.id=s.experiment where s.name='${dump}'" 2>/dev/null | sed 's/^/  /' >&2
+			echo "---" >&2
+			exit 1
+		fi
+		dumpId=`${sqlite} "${db}" "select distinct s.id from experiments e join dumps s on e.id=s.experiment where s.name='${dump}' and e.name='${experiment}'" 2>/dev/null`
+	fi
+	
+	# get prefix and suffix
+	dumpPrefix=`${sqlite} "${db}" "select prefix from dumps where id='${dumpId}'"`
+	dumpSuffix=`${sqlite} "${db}" "select suffix from dumps where id='${dumpId}'"`
+}

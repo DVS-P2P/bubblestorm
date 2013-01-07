@@ -1,0 +1,65 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+local
+   $(SML_LIB)/basis/basis.mlb
+   ../util/util.mlb
+   ../system/$(BS_RUNTIME).mlb
+   ../cusp/cusp.mlb
+   config/config.mlb
+   topology/topology.mlb
+   basic/basic.mlb
+   notification/notification.mlb
+   bubbles/bubbles.mlb
+   query/query.mlb
+   host-cache/host-cache.mlb
+in
+   ann
+      "warnUnused true"
+      "forceUsed"
+      "nonexhaustiveMatch warn"
+      "redundantMatch warn"
+      "sequenceNonUnit warn"
+   in
+      (* The main BubbleStorm structure *)
+      bubblestorm.sig
+      bubblestorm.sml
+
+      (* Creating BubbleTypes and working with Bubbles *)
+      bubbles/export.mlb
+
+      (* The datastore interface for managed bubble types *)
+      managed/datastore/export.mlb
+
+      (* The datastore interface for durable bubble types *)
+      (*durable/durable-data-store.mlb*)
+      durable/datastore/datastore.mlb
+
+      (* Querying for persistent bubbles *)
+      signature QUERY
+      structure Query
+
+      (* Notification API to build custom query & pub/sub mechanisms *)
+      signature NOTIFICATION
+      functor Notification
+
+      (* Access to the gossip protocol for measuring global statistics *)
+      signature MEASUREMENT
+      structure Measurement
+   end
+end

@@ -1,0 +1,25 @@
+#!/bin/bash
+
+if test "${#@}" != "2"; then
+	echo "Syntax: ./labels <database> <experiment>"
+	exit 1
+fi
+
+db="$1"
+statID="$2"
+
+# query the database
+select="\
+select distinct time, event_name \
+from workload where plot = 'plot' and name in (\
+select workload from node_sets where name in (\
+select name from node_groups where experiment=(\
+select name from experiments where id=(\
+select distinct experiment from statistics where id='$statID'))));"
+data=`sqlite3 -csv $db "$select"`
+
+# formatting the labels
+echo "$data" | sed 's/^\([^,]*\),\(.*\)/set label "^{\\\2}"  at first \1, graph 1.03 tc ls 10/'
+# formatting the lines
+echo "$data" | sed 's/^\([^,]*\),\(.*\)/set arrow from first \1, graph 0 to first \1, graph 1.0 arrowstyle 10/'
+

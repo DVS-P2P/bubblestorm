@@ -1,0 +1,95 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+ann
+   "warnUnused true"
+   "forceUsed"
+   "nonexhaustiveMatch warn"
+   "redundantMatch warn"
+   "sequenceNonUnit warn"
+in
+   local
+      $(SML_LIB)/basis/basis.mlb
+      ../util/util.mlb
+      ../system/signatures.mlb
+
+      (* The public API *)
+      suite.sig
+      crypto.sig
+      host.sig
+      end-point.sig
+      in-stream.sig
+      out-stream.sig
+      buffered-out-stream.sig
+      cusp.sig
+      cusp-statistics.sig
+
+      (* Implementation *)
+      config.sml
+      end-point/exception.sml
+      end-point/counter.sml
+
+      crypto/suites.sml
+      crypto/crypto-extra.sig
+      crypto/privatekey.sml
+      crypto/symmetric.sml
+      crypto/publickey.sml
+
+      stream/packet-format.sml
+      stream/in-stream-queue.sig
+      stream/in-stream-queue.sml
+      stream/out-stream-queue.sig
+      stream/out-stream-queue.sml
+      stream/buffered-out-stream.fun
+      stream/host-dispatch.sig
+      stream/host-dispatch.fun
+
+      channel/ack-callbacks.sig
+      channel/ack-generator.sig
+      channel/congestion-control.sig
+      channel/negotiation.sig
+
+      channel/packet-format.fun
+      channel/negotiation.fun
+      channel/delayed-ack.fun
+      channel/fast-retransmit.fun
+      channel/reno.fun
+      channel/channel-stack.fun
+
+      end-point/host-table.fun
+      end-point/end-point.fun
+      end-point/cusp.fun
+      
+      statistics/cusp-statistics.fun
+
+      conversation/conversation.sig
+      local
+         $(SML_LIB)/basis/mlton.mlb
+      in
+         conversation/conversation.fun (* MLton.Exn.addExnMessager *)
+      end
+   in
+      signature CUSP
+      signature CUSP_STATISTICS
+      signature CONVERSATION
+
+      functor CUSP
+      functor CUSPStatistics
+      functor Conversation
+   end
+end

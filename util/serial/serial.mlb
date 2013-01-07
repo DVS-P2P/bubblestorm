@@ -1,0 +1,55 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+ann
+   "warnUnused true"
+   "forceUsed"
+   "nonexhaustiveMatch warn"
+   "redundantMatch warn"
+   "sequenceNonUnit warn"
+in
+   local
+      $(SML_LIB)/basis/basis.mlb
+      ../basic/basic.mlb
+      ../hash/hash.mlb
+      ../fold/fold.mlb
+
+      pack.sig
+      (* pack.sml (* Portable SML version *) *)
+
+      local
+         $(SML_LIB)/basis/unsafe.mlb
+         $(SML_LIB)/basis/mlton.mlb
+      in
+         pack-mlton.sml (* Uses Unsafe to avoid bounds-checking *)
+                        (* Uses MLton.IntInf to access raw representation *)
+      end
+
+      basic-types.sml
+      serial.sig
+      serial.sml
+      serializable.sig
+   in
+      signature SERIAL
+      signature SERIALIZABLE
+
+      structure Serial
+
+      top-level.sml
+   end
+end

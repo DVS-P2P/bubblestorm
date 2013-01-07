@@ -1,0 +1,110 @@
+<html>
+	<head>
+		<title>BubbleStorm for Android</title>
+	</head>
+	<body>
+		<h1>BubbleStorm for Android</h1>
+		
+		<b>Note:</b> Currently, only the ARM architecture is supported.
+		
+		<h3>Prerequisites</h3>
+		<ul>
+			<li>
+				A <b>Linux</b> host for development
+				<br/>
+				(Generally, other OS should work as well, but at the current time everything is prepared for Linux only.)
+			</li>
+			<li>
+				The <b><a href="http://developer.android.com/sdk/">Android SDK</a></b>
+			</li>
+			<li>
+				The <b><a href="http://developer.android.com/tools/sdk/ndk/">Android NDK</a></b>
+			</li>
+			<li>
+				The <b><a href="http://mlton.org/">MLton compiler</a></b>, in a version newer than <b>2012-10-12</b>.
+				<br/>
+				If not shipped with your MLton package, you also need to install the <b><a href="mlton-target-arm-linux-androideabi.tar.bz2">arm-linux-androideabi target</a></b>
+				to <i>/usr/lib/mlton/targets/arm-linux-androideabi</i>.
+			</li>
+			<li>
+				A Java SDK (version 6 or higher) and Apache Ant.
+				Refer to the <a href="BuildingJavaLibs.html">Java bindings documention</a> for details.
+			</li>
+		</ul>
+		
+		<h3>Set-up</h3>
+		<ul>
+			<li>
+				<b>GCC toolchain for Android</b>
+				<pre>&gt; $NDK_HOME/build/tools/make-standalone-toolchain.sh --platform=android-9 --install-dir=$ANDROID_TOOLCHAIN</pre>
+				<p>
+				<i>NDK_HOME</i> should point to the installtion location of the Android NDK.
+				<br/>
+				<i>ANDROID_TOOLCHAIN</i> is the GCC toolchain target folder.
+				</p>
+			</li>
+			<li>
+				<b>GMP for Android</b>
+				<p>
+				MLton requires the <a href="http://gmplib.org/">GMP library</a>.
+				<a href="ftp://ftp.gmplib.org/pub/gmp-5.0.5/gmp-5.0.5.tar.bz2">Download<a>
+				the source code, extract it into some temporary folder, and in this folder execute:
+				</p>
+<!--				<pre>&gt; ./configure --disable-shared --build=x86_64-pc-linux-gnu --host=arm-linux-androideabi --prefix=$ANDROID_TOOLCHAIN/sysroot/usr</pre> -->
+				<pre>&gt; ./configure --disable-shared --host=arm-linux-androideabi --prefix=$ANDROID_TOOLCHAIN/sysroot/usr</pre>
+				<pre>&gt; make</pre>
+				<pre>&gt; make install</pre>
+			</li>
+			<li>
+				<b>BubbleStorm sources</b>
+				<p>
+				should be checked out from
+				<a href="https://www.dvs.tu-darmstadt.de/svn/projects/BubbleStorm/Middleware/trunk/">https://www.dvs.tu-darmstadt.de/svn/projects/BubbleStorm/Middleware/trunk/</a>
+				to a local folder, referred to as <i>BS_SRC</i> in the following.
+				</p>
+			</li>
+		</ul>
+		
+		<h3>Building the libraries</h3>
+		<ul>
+			<li>
+				<b>C bindings</b>
+				<pre>&gt; cd $BS_SRC/bindings/c/android-arm</pre>
+				<pre>&gt; export PATH=$ANDROID_TOOLCHAIN/bin:$PATH</pre>
+				<pre>&gt; make</pre>
+				<p>
+				This will download and build the <a href="http://www.sqlite.org/">SQLite3</a> library (<i>libsqlite3.so</i>)
+				and the BubbleStorm C bindings library (<i>libbubblestorm.so</i>) for Android.
+				</p>
+			</li>
+			<li>
+				<b>Java bindings</b>
+				<pre>&gt; cd $BS_SRC/bindings/java/android</pre>
+				<pre>&gt; ant</pre>
+				<p>
+				This will build the BubbleStorm JNI library (<i>bsjni.so</i>)
+				in the <i>libs/armeabi</i> subfolder
+				and copy the other two libraries (<i>libsqlite3.so</i> and <i>libbubblestorm.so</i>) into the same folder.
+				</p><p>
+				Remember to set the <i>NDK_HOME</i> environment variable to point to the Android NDK location!
+				</p>
+			</li>
+		</ul>
+		
+		<h3>Developing applications</h3>
+		<ul>
+			<li>
+				<b>Bubbler for Android</b>
+				is a BubbleStorm demo application for Android, located in <i>$BS_SRC/bindings/java/demo/Bubbler-Android</i>.
+				It is backend-compatible with the Java version in <i>$BS_SRC/bindings/java/demo/Bubbler</i>.
+			</li>
+			<li>
+				When starting a new application, make sure to require the permission <i>INTERNET</i> (full Internet access):
+				<pre>&lt;uses-permission android:name="android.permission.INTERNET" /&gt;</pre>
+			</li>
+			<li>
+				The native libraries have to be located in the <i>libs/armeabi</i> subfolder of the application project.
+			</li>
+		</ul>
+	</body>
+</html>

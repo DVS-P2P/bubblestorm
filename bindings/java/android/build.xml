@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project basedir="." default="build" name="BS-Jni-Android">
+	<property name="target" value="1.6"/>
+	<property name="source" value="1.6"/>
+	<path id="source">
+		<pathelement location="../cusp/src"/>
+		<pathelement location="../common/src"/>
+		<pathelement location="../bubblestorm/src"/>
+	</path>
+	<path id="classpath">
+		<pathelement location="../common/bin"/>
+		<pathelement location="../cusp/bin"/>
+		<pathelement location="../bubblestorm/bin"/>
+	</path>
+	<property name="cusp.dir" value="../../c/cusp"/>
+	<property name="bubblestorm.dir" value="../../c/bubblestorm"/>
+	
+	<property environment="env"/>
+	<property name="ndk-build" value="${env.NDK_HOME}/ndk-build"/>
+	
+	<target name="init">
+		<mkdir dir="bin"/>
+	</target>
+	<target name="clean">
+		<delete dir="bin"/>
+		<delete dir="obj"/>
+		<delete dir="libs"/>
+	</target>
+	
+	<target name="common">
+		<ant dir="../common" target="jni-header"/>
+	</target>
+	<target name="cusp">
+		<ant dir="../cusp" target="jni-header"/>
+	</target>
+	<target name="bubblestorm">
+		<ant dir="../bubblestorm" target="jni-header"/>
+	</target>
+	
+	<target name="ndk-build">
+		<exec executable="${ndk-build}"/>
+	</target>
+	<target name="copy-libs">
+		<copy file="../../c/android-arm/libsqlite3.so" todir="libs/armeabi"/>
+		<copy file="../../c/android-arm/libbubblestorm.so" todir="libs/armeabi"/>
+	</target>
+	
+	<target name="build" depends="init,common,cusp,bubblestorm,ndk-build,copy-libs"/>
+</project>

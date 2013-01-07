@@ -1,0 +1,25 @@
+#! /bin/bash
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+command=$(readlink -f $0)
+# Absolute path this script is in, e.g. /home/user/bin
+path=`dirname $command`
+# Basemame of this script, e.g. foo
+script=`basename $command`
+# init
+source $path/util/plot_init
+
+gnuplot -persist <<EOF
+$(source $setup_sh)
+
+set xdata time
+set format x "%H:%M"
+set xlabel "Simulated time"
+set logscale y
+
+$($labels_sh "${dbs[0]}" "${statIDs[0]}")
+plot \
+	f("${dbs[0]}", "${statIDs[0]}", "var, avg") using 1:(sqrt(\$2)/\$3) with lines ls 9 title "norm std", \
+	f("${dbs[0]}", "${statIDs[0]}", "max") using 1:2 with lines ls 1 title "max", \
+	f("${dbs[0]}", "${statIDs[0]}", "min") using 1:2 with lines ls 3 title "min", \
+	f("${dbs[0]}", "${statIDs[0]}", "avg") using 1:2 with lines ls 2 title "avg"
+EOF

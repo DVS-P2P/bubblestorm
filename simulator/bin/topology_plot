@@ -1,0 +1,25 @@
+#! /usr/bin/make -f
+
+DB := simulator.db
+QUERY := experiment=3 and name='topology.dot'
+
+TIMES := $(shell sqlite3 $(DB) "select time from dumps where $(QUERY);" | sed 's/ /T/;s/:/_/g')
+
+.PHONY:	all
+all:	$(patsubst %,ps/%.pdf,$(TIMES))
+	echo done
+
+.PHONY: clean
+clean:
+	rm -rf ps
+	mkdir ps
+
+ps/%.dot:
+	@sqlite3 $(DB) "select text from dumps where time=replace(replace('$*','T',' '),'_',':') and $(QUERY);" > $@ 
+	@echo Generating $@
+
+ps/%.ps:	ps/%.dot
+	neato -Tps $< > $@
+
+ps/%.pdf:	ps/%.ps
+	epstopdf $<

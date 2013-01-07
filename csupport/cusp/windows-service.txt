@@ -1,0 +1,5 @@
+Register service:
+sc.exe create CUSP-ICMP binpath= C:\...
+
+Remove:
+sc.exe delete CUSP-ICMP

@@ -1,0 +1,7 @@
+#! /bin/sh
+
+dir=`dirname "$0"`
+cpu=`cat "$MLTON_LIB_DIR/targets/$1/arch"`
+lib="$dir/$2/libbs-asm-$cpu.a"
+
+exec "$MLTON_LIB_DIR/static-library" "$@" "$lib"

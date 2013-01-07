@@ -1,0 +1,177 @@
+<h1>Building BubbleStorm Libraries for Java</h1>
+
+<b>Note: the original version of this file can be found at <em>&lt;BubbleStorm Middleware&gt;/doc/bindings/BuildingJavaLibs.html</em></b>
+
+<h2>Linux</h2>
+
+<h3>Prerequisites</h3>
+
+<b>MLton compiler</b>
+
+<ul>
+  <li>Debian/Ubuntu: mlton (version 20100608 or better)</li>
+  <li>Gentoo: (inofficial SVN-ebuilds)</li>
+</ul>
+
+<b>SQLite library</b>
+
+<ul>
+<li>via your distribution's package manager</li>
+<ul>
+  <li>Debian/Ubuntu: sqlite3</li>
+  <li>Gentoo: dev-db/sqlite</li>
+</ul>
+</ul>
+
+<b>Java 6 JDK</b>
+
+<ul>
+<li>via your distribution's package manager</li>
+<ul>
+  <li>Debian/Ubuntu: sun-java6-jdk</li>
+  <li>Gentoo: dev-java/sun-jdk</li>
+</ul>
+</ul>
+
+
+<b>Apache Ant</b>
+
+<ul>
+<li>via your distribution's package manager</li>
+<ul>
+  <li>Debian/Ubuntu: ant</li>
+  <li>Gentoo: dev-java/ant</li>
+</ul>
+</ul>
+
+<b>Subversion Client</b>
+
+<ul>
+<li>via your distribution's package manager</li>
+<ul>
+  <li>Debian/Ubuntu: subversion</li>
+  <li>Gentoo: dev-util/subversion</li>
+</ul>
+</ul>
+
+
+<h3>Build BubbleStorm libraries</h3>
+
+<b>Get BubbleStorm sources</b>
+
+<ul>
+<li>check out the BubbleStorm project from <em>https://www.dvs.tu-darmstadt.de/svn/projects/BubbleStorm/Middleware/trunk</em>:
+<pre>
+cd &lt;checkout folder&gt;
+svn co https://www.dvs.tu-darmstadt.de/svn/projects/BubbleStorm/Middleware/trunk
+</pre>
+</li>
+</ul>
+
+
+<b>Compile BubbleStorm C-bindings library (libbubblestorm.so)</b>
+
+<ul>
+<li>go to folder <em>&lt;BubbleStorm checkout&gt;/bindings/c/bubblestorm</em></li>
+<li>run <em>make</em> to get <em>libbubblestorm.so</em></li>
+</ul>
+
+
+<b>Build Java JNI bindings</b>
+
+<ul>
+<li>go to folder <em>&lt;BubbleStorm checkout&gt;/bindings/java</em></li>
+<li>run <em>ant</em> to get <em>bubblestorm/libbsjni.so</em> and the Javadoc HTML output in <em>javadoc</em></li>
+</ul>
+<b>or</b>
+<ul>
+<li>go to folder <em>&lt;BubbleStorm checkout&gt;/bindings/java/bubblestorm</em></li>
+<li>run <em>ant</em> to get <em>libbsjni.so</em></li>
+</ul>
+
+
+<h2>Windows</h2>
+
+<h3>Prerequisites</h3>
+
+<b>MLton compiler</b>
+
+<ul>
+<li>download: <a href="http://mlton.org/Release20100608">http://mlton.org/Release20100608</a>, or <a href="http://mlton.org/pages/Download/attachments/MLton-20100608-1.exe">direct link</a></li>
+<li>run installer, follow installation steps</li>
+<li><em>append &lt;mlton install folder&gt;\bin</em> to PATH environment variable (if necessary)</li>
+</ul>
+
+
+<b>SQLite library (sqlite3.dll)</b>
+
+<ul>
+<li>download sqlite-amalgamation from <a href="http://sqlite.org/download.html">http://sqlite.org/download.html</a></li>
+<li>extract contents to some folder</li>
+<li>compile: in a command prompt run <em>gcc -shared sqlite3.c -o sqlite3.dll</em></li>
+<li>keep files <em>sqlite3.dll</em> and <em>sqlite3.def</em></li>
+</ul>
+
+
+<b>Java 6 JDK</b>
+
+<ul>
+<li>download from <a href="http://java.sun.com/javase/downloads/widget/jdk6.jsp">http://java.sun.com/javase/downloads/widget/jdk6.jsp</a></li>
+<li>run installer, follow installation steps</li>
+<li>set JAVA_HOME environment variable to JDK location, e.g., <em>C:\Program Files\Java\jdk1.6.0_20</em></li>
+</ul>
+
+
+<b>Apache Ant</b>
+
+<ul>
+<li>download from <a href="http://ant.apache.org/bindownload.cgi">http://ant.apache.org/bindownload.cgi</a> (e.g., <a href="http://apache.mirroring.de/ant/binaries/apache-ant-1.8.0-bin.zip">http://apache.mirroring.de/ant/binaries/apache-ant-1.8.0-bin.zip</a>)</li>
+<li>extract contents to program folder, e.g, <em>C:\Program Files</em></li>
+<li>set ANT_HOME environment variable to installation directory, e.g., <em>C:\Program Files\apache-ant-1.8.0</em></li>
+<li>append bin folder (e.g., <em>C:\Program Files\apache-ant-1.8.0\bin</em>) to PATH environment variable</li>
+</ul>
+
+
+<b>Subversion Client</b>
+
+<ul>
+<li>e.g., Tortoise: <a href="http://tortoisesvn.tigris.org/">http://tortoisesvn.tigris.org/</a></li>
+</ul>
+
+<h3>Build BubbleStorm libraries</h3>
+
+<b>Get BubbleStorm sources</b>
+
+<ul>
+<li>check out the BubbleStorm project (using your Subversion client) from https://www.dvs.tu-darmstadt.de/svn/projects/BubbleStorm/Middleware/trunk</li>
+</ul>
+
+
+<b>Compile BubbleStorm C-bindings library (bubblestorm.dll)</b>
+
+<ul>
+<li>go to folder <em>&lt;BubbleStorm checkout&gt;\bindings\c\bubblestorm</em></li>
+<li>copy sqlite3.dll/.def to that folder</li>
+<li>run <em>make</em> to get bubblestorm.dll/.def</li>
+</ul>
+
+
+<b>Build Java JNI bindings</b>
+
+<ul>
+<li>go to folder <em>&lt;BubbleStorm checkout&gt;\bindings\java</em></li>
+<li>run <em>ant</em> to get <em>bubblestorm\libbsjni.dll</em> and the Javadoc HTML output in <em>javadoc</em></li>
+</ul>
+<b>or</b>
+<ul>
+<li>go to folder <em>&lt;BubbleStorm checkout&gt;\bindings\java\bubblestorm</em></li>
+<li>run <em>ant</em> to get <em>bsjni.dll</em></li>
+</ul>
+
+<h3>If you are using 64-bit Java</h3>
+
+<ul>
+<li>Make sure to install the 64-bit components of MLton. Select "Full" installation in the MLton installer.</li>
+<li>Edit <em>&lt;BubbleStorm checkout&gt;\bindings\c\bubblestorm\Makefile</em>: add " -target x86_64-w64-mingw32" to the "MLFLAGS" line
+<li>Edit <em>&lt;BubbleStorm checkout&gt;\bindings\java\bubblestorm\build.xml</em>: in target <em>jni-lib-windows</em>, replace executable "gcc" with "x86_64-w64-mingw32-gcc"
+</ul>

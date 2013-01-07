@@ -1,0 +1,93 @@
+#! /bin/bash
+#
+# Outputs the average value of a given statistic over a given time interval.
+#
+
+# Absolute path to this script, e.g. /home/user/bin/foo.sh
+command=$(readlink -f $0)
+# Absolute path this script is in, e.g. /home/user/bin
+path=`dirname $command`
+# Basemame of this script, e.g. foo
+script=`basename $command`
+
+usage="Usage: $script [-h] [-d <database>] [-e <experiment-name>] [-n <node-id>] [-q <extra-query>] -s <statistic-name>"
+
+# load utility functions
+source "$path/util/stat_util"
+
+# default params
+unset dbs
+unset experiments
+unset statNames
+node="-1"
+query="1"
+
+# Parse command line options.
+while getopts hd:e:n:s:o:q: OPT; do
+	case "$OPT" in
+		h)
+			echo $usage
+			exit 0
+			;;
+		d)
+			dbs[${#dbs[@]}]="$OPTARG"
+			;;
+		e)
+			experiments[${#experiments[@]}]="$OPTARG"
+			;;
+		s)
+			statNames[${#statNames[@]}]="$OPTARG"
+			;;
+		n)
+			node="$OPTARG"
+			;;
+		q)
+			query="${OPTARG//\"/\\\"}"
+			;;
+		[?])
+			# getopts issues an error message
+			echo $usage >&2
+			exit 1
+			;;
+	esac
+done
+
+# statistic name is mandatory
+if [ -z "$statNames" ]; then echo $usage >&2; exit 1; fi
+
+if [ -z "$dbs" ]; then dbs[0]="simulator.db"; fi
+if [ -z "$experiments" ]; then experiments[0]=""; fi
+
+# print header line
+line="experiment"
+for i in `seq 1 ${#statNames[@]}`; do
+	db=${dbs[0]}
+	experiment=${experiments[0]}
+	statName=${statNames[i-1]}
+	getStatId "$db" "$experiment" "$statName" "$node"
+	getStatLabelUnit "$db" "$statId"
+	line="$line\t\"${statLabelUnit}\""
+done
+echo -e $line
+
+# print data lines
+for k in `seq 1 ${#dbs[@]}`; do
+	db=${dbs[k-1]}
+	
+	for j in `seq 1 ${#experiments[@]}`; do
+		experiment=${experiments[j-1]}
+		line=""
+		
+		for i in `seq 1 ${#statNames[@]}`; do
+			statName=${statNames[i-1]}
+			getStatId "$db" "$experiment" "$statName" "$node"
+			
+			if [ -z "$line" ]; then line="\"$db $experimentName\""; fi
+			
+			res=`${sqlite} -csv $db "select sum(sum)/sum(count) from measurements where statistic=${statId} and ${query}"`
+			line="${line}\t${res}"
+		done
+		
+		echo -e $line
+	done
+done

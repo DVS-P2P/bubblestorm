@@ -1,0 +1,118 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+local
+   $(SML_LIB)/basis/basis.mlb
+   $(SML_LIB)/basis/mlton.mlb
+   ../system/sources.mlb
+   ../system/native.mlb
+   ../cusp/sources.mlb
+in
+   ann
+      "warnUnused true"
+      "forceUsed"
+      "nonexhaustiveMatch warn"
+      "redundantMatch warn"
+      "sequenceNonUnit warn"
+   in
+      local
+         experiment/experiment.sig
+         experiment/experiment.sml
+(*
+         location/location.sig
+         location/location.sml
+
+         location-geo/location.sig
+         location-geo/location.sml
+*)
+         location-virtual/location.sig
+         location-virtual/location.sml
+
+         churn/lifetime-distribution.sig
+         churn/lifetime-distribution.sml
+
+         nodes/address-extra.sig
+         nodes/address.sml
+         udp/routing.sml
+         nodes/bandwidth.sig
+         nodes/bandwidth.sml
+         nodes/connection-properties.sig
+         nodes/connection-properties.sml
+         nodes/arguments.sig
+         nodes/arguments.sml
+         nodes/node-definition.sig
+         nodes/node-definition.sml
+         nodes/simulator-node.sig
+         nodes/simulator-node.sml
+         
+         log/simulator-log-writer.sml
+         log/simulator-log.sml
+         log/simultaneous-dump.sml
+
+         main/simulator-command-line.sml
+         main/node-event.sml
+         nodes/node-trigger.sig
+         nodes/node-trigger.sml
+         random/simulator-entropy.sml
+
+         statistics/simulator-statistics-helper.sml
+         statistics/simulator-statistics-writer.sml
+         statistics/statistics.sml
+         
+         nodes/node-group.sig
+         nodes/node-group.sml
+         udp/address-table.sig
+         udp/address-table.sml
+         churn/application-table.sig
+         churn/application-table.sml
+         churn/churn-manager.sig
+         churn/churn-manager.sml
+         churn/workload.sig
+         churn/workload.sml
+
+         network-model/network-model.sig
+         network-model/dummy-model.sml
+         network-model/pinger-loss.fun
+         network-model/constant-loss.fun
+         network-model/constant-delay.fun
+         network-model/coordinate-based-delay.fun
+(*       network-model/arc-length-delay.fun*)
+         network-model/loopback-delay.fun
+
+         udp/ip-stack.sig
+         udp/message-router.fun
+         udp/out-queue.fun
+         udp/in-queue.fun
+         udp/udp-statistics.sml
+         udp/udp.fun
+         
+         main/simulator-main.sml
+         statistics/stats.sml
+
+         parallel/pdes.sig
+         parallel/pdes.sml
+         
+         startup/arguments.sig
+         startup/arguments.sml
+         startup/simulator.sig
+         startup/simulator.sml
+      in
+         startup/globals.sml
+      end 
+   end
+end

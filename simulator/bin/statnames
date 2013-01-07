@@ -1,0 +1,8 @@
+#!/bin/bash
+if [ $# -gt 0 ];then
+   DB="$1"
+else
+   DB="simulator.db"
+fi
+MAX_NAME=`sqlite3 $DB "select max(length(name)) from statistics;"`
+sqlite3 $DB "select distinct(name), label, units from statistics;" | awk -F "|" "{printf \"%${MAX_NAME}-s  %s (%s)\n\",\$1,\$2,\$3}"

@@ -1,0 +1,61 @@
+(*
+   This file is part of BubbleStorm.
+   Copyright © 2008-2013 the BubbleStorm authors
+
+   BubbleStorm is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   BubbleStorm is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
+*)
+
+ann
+   "warnUnused true"
+   "forceUsed"
+   "nonexhaustiveMatch warn"
+   "redundantMatch warn"
+   "sequenceNonUnit warn"
+in
+   local
+      $(SML_LIB)/basis/basis.mlb
+      ../basic/basic.mlb
+
+      dynamic-array.sig
+      dynamic-array.sml
+      id-bucket.sig
+      id-bucket.sml
+      stack.sig
+      stack.sml
+      queue.sig
+      queue.sml
+      tree.sig
+      tree.fun
+      ring.sig
+      ring.sml
+   in
+      signature DYNAMIC_ARRAY
+      signature ID_BUCKET
+      signature IMPERATIVE_QUEUE
+      signature QUEUE
+      signature RAM_STACK
+      signature RING
+      signature STACK
+      signature TREE
+
+      structure DynamicArray
+      structure IdBucket
+      structure ImperativeQueue
+      structure Queue
+      structure Ring
+      structure Stack
+
+      functor Tree
+   end
+end

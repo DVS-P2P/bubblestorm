@@ -1,0 +1,205 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<style>
+*{margin:0;padding:0;}
+body {
+	font:13.34px helvetica,arial,freesans,clean,sans-serif;
+	color:black;
+	line-height:1.4em;
+	background-color: #F8F8F8;
+	padding: 0.7em;
+}
+p {
+	margin:1em 0;
+	line-height:1.5em;
+}
+table {
+	font-size:inherit;
+	font:100%;
+	margin:1em;
+}
+table th{border-bottom:1px solid #bbb;padding:.2em 1em;}
+table td{border-bottom:1px solid #ddd;padding:.2em 1em;}
+input[type=text],input[type=password],input[type=image],textarea{font:99% helvetica,arial,freesans,sans-serif;}
+select,option{padding:0 .25em;}
+optgroup{margin-top:.5em;}
+pre,code{font:12px Monaco,"Courier New","DejaVu Sans Mono","Bitstream Vera Sans Mono",monospace;}
+pre {
+	margin:1em 0;
+	font-size:12px;
+	background-color:#eee;
+	border:1px solid #ddd;
+	padding:5px;
+	line-height:1.5em;
+	color:#444;
+	overflow:auto;
+	-webkit-box-shadow:rgba(0,0,0,0.07) 0 1px 2px inset;
+	-webkit-border-radius:3px;
+	-moz-border-radius:3px;border-radius:3px;
+}
+pre code {
+	padding:0;
+	font-size:12px;
+	background-color:#eee;
+	border:none;
+}
+code {
+	font-size:12px;
+	background-color:#f8f8ff;
+	color:#444;
+	padding:0 .2em;
+	border:1px solid #dedede;
+}
+img{border:0;max-width:100%;}
+abbr{border-bottom:none;}
+a{color:#4183c4;text-decoration:none;}
+a:hover{text-decoration:underline;}
+a code,a:link code,a:visited code{color:#4183c4;}
+h2,h3{margin:1em 0;}
+h1,h2,h3,h4,h5,h6{border:0;}
+h1{font-size:170%;border-top:4px solid #aaa;padding-top:.5em;margin-top:1.5em;}
+h1:first-child{margin-top:0;padding-top:.25em;border-top:none;}
+h2{font-size:150%;margin-top:1.5em;border-top:4px solid #e0e0e0;padding-top:.5em;}
+h3{margin-top:1em;}
+hr{border:1px solid #ddd;}
+ul{margin:1em 0 1em 2em;}
+ol{margin:1em 0 1em 2em;}
+ul li,ol li{margin-top:.5em;margin-bottom:.5em;}
+ul ul,ul ol,ol ol,ol ul{margin-top:0;margin-bottom:0;}
+blockquote{margin:1em 0;border-left:5px solid #ddd;padding-left:.6em;color:#555;}
+dt{font-weight:bold;margin-left:1em;}
+dd{margin-left:2em;margin-bottom:1em;}
+@media screen and (min-width: 768px) {
+    body {
+        width: 748px;
+        margin:10px auto;
+    }
+}
+</style>
+<title>Das Testbed wird in folgender Arbeit genau beschrieben: [Kontroll- und Messumgebung für Netzwerkprototypen](http://www</title>
+<script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+</head>
+<body>
+<p>Das Testbed wird in folgender Arbeit genau beschrieben: <a href="http://www.dvs.tu-darmstadt.de/publications/BScs/Bloecher-Marcel-BSc.pdf" title="PDF anzeigen">Kontroll- und Messumgebung für Netzwerkprototypen</a>.</p>
+
+<p><strong>Eine kurze Anleitung befindet sich in svn/testbed/README.</strong></p>
+
+<h1>Komponenten</h1>
+
+<p>Das Testbed besteht aus zwei Programmkomponenten: Einem <em>Master</em> und mindestens einem <em>Client</em>. Der <em>Master</em> koordiniert das Experiment und ist die Schnittstelle für den Benutzer um das Experiment steuern zu können. Auf jedem Host, der für das Experiment benutzt wird, läuft ein <em>Client</em>. Dieser ist für die Steuerung der Prototypen zuständig, die auf diesem Host laufen. Die <em>Clients</em> werden von dem <em>Master</em> gesteuert.</p>
+
+<h1>Konfiguration</h1>
+
+<h2>SQL:</h2>
+
+<p>Zusätzlich, zu der aus der Simulation bekannten Konfiguration, kommen noch folgende Tabellen hinzu:</p>
+
+<ul>
+<li><em>prototypes</em>: Hier werden die Prototypen spezifiziert. Zu einem <em>command</em> (dieser <em>command</em> wird über die Tabelle <em>node_groups</em> referenziert) können bis zu zwei Prototypen angegeben werden (jeweils für 32- und 64-Bit). Mit <em>libs_path</em> können libs angegeben werden, die bei der Ausführung dem Prototypen per <em>LD_LIBRARY_PATH</em> zur Verfügung stehen. Mit <em>data_path</em> werden Dateien angegeben, die in das Arbeitsverzeichnis des Prototypen kopiert werden.</li>
+<li><em>hosts</em>: Hier werden die zur Verfügung stehenden Hosts eingetragen. Die Hosts müssen per SSH erreichbar sein (Zugangsdaten: <em>user_name</em>, <em>key_file</em>). <em>max_prototypes</em> gibt an, wie viele Prototypen maximal auf diesem Host ausgeführt werden dürfen. Die Portrange für die Prototypen wird mit <em>usable_ports_start</em>
+und <em>usable_ports_end</em> angegeben. <em>working_dir</em> gibt das Arbeitsverzeichnis auf diesem Host an.</li>
+<li><em>node_host_placement</em>: Diese Konfiguration ist optional. Hier können Relationen zwischen nodegroups angegeben werden, welche Auswirkungen auf die Zuordnung der Knoten zu den Hosts haben. Zur Verfügung stehen <em>bound</em> und <em>exclusion</em>. Wird zB  nodegroup<strong>A</strong> mit <em>exclusion</em> zu nodegroup<strong>B</strong> eingetragen, werden Knoten der beiden Gruppen nicht auf demselben Host platziert.</li>
+<li><em>node_data</em>: Diese Konfiguration ist optional. Hier können zu einer nodegroup zusätzliche Dateien angegeben werden, unabhängig von dem zugeordnetem Prototypen.</li>
+</ul>
+
+
+<h2>PlanetLab/GermanLab</h2>
+
+<p>Für PlanetLab/GermanLab steht ein Script zur Verfügung, das die Eintragung der nodes in die Tabelle <em>hosts</em> automatisch übernimmt. Ausführen mit: <code>./PLCAPI.py</code>. Als <em>host working dir</em> sollte ein Verzeichnis gewählt werden, welches eindeutig zu dem Benutzer zugeordnet werden kann.</p>
+
+<h2>Programmeinstellungen:</h2>
+
+<p>Das Verhalten des Testbeds kann über einige Parameter angepasst werden. In der Datei <code>testbed/base/Constants.py</code> befinden sich viele Parameter. Unter anderem kann das explizite Überprüfen der HOST-Keys für SSH Verbindungen deaktiviert werden (<code>SSH_HOST_KEY_CHECKING=False</code>), die Anzahl der WorkerThreads angepasst werden (<code>WORKER_THREADS</code>) oder die (mindest)Vorlaufzeit für den Startzeitpunkt eines Experiments festgelegt werden (<code>START_EXPERIMENT_LEADTIME_SECONDS</code>).</p>
+
+<h1>Experiment: Ablauf</h1>
+
+<ol>
+<li>Konfiguration des Experiments (siehe Abschnitt <em>Konfiguration</em>)</li>
+<li><code>make</code> ausführen, dann Master starten (siehe Abschnitt <em>Programmstart</em>)</li>
+<li>Discovery
+
+<ul>
+<li>Der <em>Master</em> überprüft die Hosts, welche Verfügbar sind und stellt deren Eigenschaften fest. Hier werden auch die aktuell verfügbaren Ressourcen ermittelt (Arbeitsspeicher, Festplatte, …).</li>
+</ul>
+</li>
+<li>Deployment
+
+<ul>
+<li>Der Benutzer wird nun gefragt, ob er möglichst viele Hosts verwenden möchte, oder möglich wenig. Dies hat Einfluss auf die automatische Zuordnung der nodes zu den Hosts. Wählt der Benutzer die Option <code>less</code>, werden so wenig Hosts wie möglich verwendet. Dh pro Host werden viele nodes zugeordnet. Wählt der Benutzer <code>many</code>, werden möglichst alle verfügbaren Hosts verwendet. Letztere Option sorgt wahrscheinlich für bessere Ergebnisse, ist jedoch gleichzeitig auch aufwendiger, da viel mehr Hosts vorbereitet werden müssen.</li>
+<li>Nach der Zuordnung der nodes werden die Hosts vorbereitet. Der <em>Master</em> kopiert die <em>Clients</em> sowie die Prototypen auf die Hosts.</li>
+<li>Danach werden die <em>Clients</em> gestartet sodass diese weitere Vorbereitungen treffen können.</li>
+<li>Der Master bis alle Clients bereit sind und fragt dann den Benutzer nach dem Startzeitpunkt des Experiments.</li>
+<li>Sobald der Master den Clients den Startzeitpunkt mittgeteilt hat, kann der Master beendet werden.</li>
+</ul>
+</li>
+<li>Monitoring
+
+<ul>
+<li>Während des Experiments muss der Master nicht aktiv sein.</li>
+<li>Der Zustand der Clients kann mit dem Master überprüft werden.</li>
+</ul>
+</li>
+<li>Postprocessing
+
+<ul>
+<li>Sobald das Experiment vorbei ist, kontaktiert der <em>Master</em> die Hosts um festzustellen, welche mit der Nachbereitung der Datenbanken der nodes bereits fertig ist. Findet der <em>Master</em> solche, lädt er die Datenbank vom Host und fügt diese in die eigene Datenbank ein.</li>
+<li>Nachdem die Datenbanken aller Hosts kopiert wurden, befinden sich die Mess/Log/Dump-Daten aller Knoten in der zentralen Datenbank.</li>
+<li>Neben der Zusammenfassung der Datenbanken können noch weitere Daten von den Hosts geladen werden. Hierzu mehr im Abschnitt <em>Auswertung</em>.</li>
+</ul>
+</li>
+</ol>
+
+
+<h1>Programmstart:</h1>
+
+<p>Der Master wird über das <code>run.sh</code> Skript gestartet. Es müssen mindestens diese Parameter gesetzt sein: <code>./run.sh -d database.db -e experiment</code> (analog zum Simulator).</p>
+
+<p>Das Logging kann mit <code>-v</code>, <code>-vv</code>, … konfiguriert werden. Bei höheren Logleveln ist die Verwendung des Logservers zu empfehlen. Mehr hierzu in Abschnitt <em>Logging</em>.</p>
+
+<p>(Die Parameter <em>--debug</em> und <em>--profile</em> sind nur für interne Tests relevant)</p>
+
+<h1>Logging:</h1>
+
+<p>Die Logausgaben des Masters können an einen Logserver gesendet werden. Der Maser wird dazu mit <code>--logserver</code> gestartet.</p>
+
+<p>Der Logserver wird mit <code>python -m testbed.scripts.LoggingServer
+ -p 7777</code> gestartet. Dieser zeigt alle Logs an, die lokal an Port TCP 7777 gesendet werden. Der Master ist entsprechend konfiguriert und nutzt den gleichen Port.</p>
+
+<h1>Auswertung:</h1>
+
+<p>Es stehen mehrere Möglichkeiten zur Verfügung nach einem Experiment weitere Daten von den Hosts zu laden:</p>
+
+<ul>
+<li>nach nodeID(s)</li>
+<li>nach nodeGroup(s)</li>
+<li>nach hostID(s)</li>
+</ul>
+
+
+<p>Die Daten werden im Verzeichnis collectedData gespeichert.</p>
+
+<h1>Verzeichnisstruktur:</h1>
+
+<h2>Master:</h2>
+
+<p>Wird das Arbeitsverzeichnis initialisiert (python -m testbed.init), werden folgende Dateien/Order erstellt:
+- <em>Makefile</em> zum erstellen der Datenbanken
+- <em>run.sh</em> zum Starten des Masters
+- <em>SQL</em> Order der die fürs Testet angepassten SQL Daten beinhaltet</p>
+
+<p>Während der Laufzeit des Masters, werden noch weitere Dateien/Ordner erzeugt:
+- <em>CollectedData</em> enthält die von den Hosts geladenen Dateien
+- <em>experiment.db</em> die exp Datenbank
+- <em>experiment_node.db</em> die Datenbank für die Knoten
+- <em>knownHosts</em> enthält die ssh fingerprints der Hosts
+- <em>python-static</em> der statisch gebundene Python Interpreter für die Hosts
+- <em>sshConnections</em> wird für die Verwaltung der SSH-Master Connections benötigt</p>
+
+<h2>Host:</h2>
+
+<p>Im Arbeitsverzeichnis des Hosts wird der Python-Interpreter sowie das inspect.py Script. Diese sind unabhängig vom Experiment. Für jedes Experiment wird nun ein eigener Unterordner angelegt. Darin befinden sich die Arbeitsverzeichnisse der nodes sowie weitere Daten.</p>
+</body>
+</html>

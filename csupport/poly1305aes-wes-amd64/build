@@ -1,0 +1,12 @@
+#! /bin/sh
+dir=`dirname "$0"`
+
+for i in "$dir/"*.q; do
+  linux="$dir/linux/"`basename $i .q`.s
+  mingw="$dir/mingw/"`basename $i .q`.s
+  
+  echo "$i -> $linux" 
+  sed 's/^#LINUX //' < "$i" | ./qhasm-amd64     > "$linux"
+  echo "$i -> $mingw"
+  sed 's/^#MINGW //' < "$i" | ./qhasm-amd64-win > "$mingw"
+done
