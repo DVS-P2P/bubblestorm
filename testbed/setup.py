@@ -8,11 +8,17 @@ import sys
 import shutil
 
 
-# read svn rev from "svnversion"
-__version__ = subprocess.Popen(['svnversion','-n','.'],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode()
+# svn:
+#__version__ = subprocess.Popen(['svnversion','-n','.'],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode()
+# git:
+GIT_LOG_FORMAT_OPTIONS = ['%ad','%H']
+GIT_LOG_FORMAT_STRING = '\t'.join(GIT_LOG_FORMAT_OPTIONS)
+
+__version__ = subprocess.Popen(['git','log','-1','--name-status','--date=short','--format="{0}"'.format(GIT_LOG_FORMAT_STRING)],shell=False,stdout=subprocess.PIPE,stderr=subprocess.PIPE).communicate()[0].decode().split("\n")[0][1:-1]
+(version_date,version_tag) = __version__.split('\t')
 
 def getVersion():
-	return 'rev_' + __version__
+	return '{0}-{1}'.format(version_date,version_tag)
 
 
 sdistMode = False
