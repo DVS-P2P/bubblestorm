@@ -50,7 +50,7 @@
 				<a href="ftp://ftp.gmplib.org/pub/gmp-5.0.5/gmp-5.0.5.tar.bz2">Download<a>
 				the source code, extract it into some temporary folder, and in this folder execute:
 				</p>
-<!--				<pre>&gt; ./configure --disable-shared --build=x86_64-pc-linux-gnu --host=arm-linux-androideabi --prefix=$ANDROID_TOOLCHAIN/sysroot/usr</pre> -->
+				<pre>&gt; export PATH=$ANDROID_TOOLCHAIN/bin:$PATH</pre>
 				<pre>&gt; ./configure --disable-shared --host=arm-linux-androideabi --prefix=$ANDROID_TOOLCHAIN/sysroot/usr</pre>
 				<pre>&gt; make</pre>
 				<pre>&gt; make install</pre>
