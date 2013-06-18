@@ -1,0 +1,5 @@
+/lib*.h
+/lib*.so
+/lib*.dylib
+/*.dll
+/sqlite-amalgamation-*

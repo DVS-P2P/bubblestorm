@@ -43,6 +43,7 @@
 	<target name="copy-libs">
 		<copy file="../../c/android-arm/libsqlite3.so" todir="libs/armeabi"/>
 		<copy file="../../c/android-arm/libbubblestorm.so" todir="libs/armeabi"/>
+		<copy file="../../c/android-arm/libcusp.so" todir="libs/armeabi"/>
 	</target>
 	
 	<target name="build" depends="init,common,cusp,bubblestorm,ndk-build,copy-libs"/>
