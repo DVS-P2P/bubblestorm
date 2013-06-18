@@ -37,6 +37,11 @@ public class CUSPJni extends BSJniBase {
 	 */
 	public static void init() {
 		if (!initialized) {
+			// load native SQLite and CUSP libraries
+			// (cuspjni depends on them, but the OS may not find it if it's not in
+			// the search path)
+			System.loadLibrary("sqlite3");
+			System.loadLibrary("cusp");
 			// load native CUSP library
 			System.loadLibrary("cuspjni");
 			// init super class
