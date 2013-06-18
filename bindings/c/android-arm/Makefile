@@ -12,7 +12,7 @@ TARGETS := libbubblestorm.so libcusp.so
 all:	$(TARGETS)
 
 clean:
-	rm -f $(TARGETS) libbubblestorm.h .*.d
+	rm -f $(TARGETS) libbubblestorm.h libcusp.h .*.d
 	rm -rf libsqlite3.so $(SQLITE_NAME) $(SQLITE_ARCHIVE)
 
 # SQLite3
@@ -30,38 +30,41 @@ libsqlite3.so:	$(SQLITE_NAME)/sqlite3.c
 # non-debug
 MLFLAGS = -target arm-linux-androideabi -drop-pass 'deepFlatten' -verbose 2
 
-libbubblestorm.a:	../bubblestorm/libbubblestorm.mlb .libbubblestorm.d libsqlite3.so
-	$(MLTON) -export-header libbubblestorm.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format archive -output $@ $<
+.SECONDEXPANSION:
+lib%.a:	../$$*/lib$$*.mlb .lib%.d libsqlite3.so
+	$(MLTON) -export-header lib$*.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format archive -output $@ $<
 
-libbubblestorm.so:	../bubblestorm/libbubblestorm.mlb .libbubblestorm.d libsqlite3.so
-	$(MLTON) -export-header libbubblestorm.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format library -output $@ $<
+.SECONDEXPANSION:
+lib%.so:	../$$*/lib$$*.mlb .lib%.d libsqlite3.so
+	$(MLTON) -export-header lib$*.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format library -output $@ $<
 	arm-linux-androideabi-strip $@
 
-.libbubblestorm.d:	../bubblestorm/libbubblestorm.mlb
+.SECONDEXPANSION:
+.lib%.d:	../$$*/lib$$*.mlb
 	@echo Analyzing dependencies for $<
 	@echo "$@ $*: " `$(MLTON) -stop f $< | grep -v "[ :]\|^/"` > $@.tmp
 	@mv $@.tmp $@
 
-libcusp.a:	../cusp/libcusp.mlb .libcusp.d libsqlite3.so
-	$(MLTON) -export-header libcusp.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format archive -output $@ $<
-
-libcusp.so:	../cusp/libcusp.mlb .libcusp.d libsqlite3.so
-	$(MLTON) -export-header libcusp.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format library -output $@ $<
-	arm-linux-androideabi-strip $@
-
-.libcusp.d:	../cusp/libcusp.mlb
-	@echo Analyzing dependencies for $<
-	@echo "$@ $*: " `$(MLTON) -stop f $< | grep -v "[ :]\|^/"` > $@.tmp
-	@mv $@.tmp $@
-
-# lib%.a:	$(wildcard $(subst X,%,../X/libX.mlb)) .lib%.d libsqlite3.so
-# 	$(MLTON) -export-header $*.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format archive -output $@ $<
+# libbubblestorm.a:	../bubblestorm/libbubblestorm.mlb .libbubblestorm.d libsqlite3.so
+# 	$(MLTON) -export-header libbubblestorm.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format archive -output $@ $<
 # 
-# lib%.so:	$(wildcard $(subst X,%,../X/libX.mlb)) .lib%.d libsqlite3.so
-# 	$(MLTON) -export-header $*.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format library -output $@ $<
+# libbubblestorm.so:	../bubblestorm/libbubblestorm.mlb .libbubblestorm.d libsqlite3.so
+# 	$(MLTON) -export-header libbubblestorm.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format library -output $@ $<
 # 	arm-linux-androideabi-strip $@
 # 
-# .lib%.d:	../%/lib%.mlb
+# .libbubblestorm.d:	../bubblestorm/libbubblestorm.mlb
+# 	@echo Analyzing dependencies for $<
+# 	@echo "$@ $*: " `$(MLTON) -stop f $< | grep -v "[ :]\|^/"` > $@.tmp
+# 	@mv $@.tmp $@
+# 
+# libcusp.a:	../cusp/libcusp.mlb .libcusp.d libsqlite3.so
+# 	$(MLTON) -export-header libcusp.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format archive -output $@ $<
+# 
+# libcusp.so:	../cusp/libcusp.mlb .libcusp.d libsqlite3.so
+# 	$(MLTON) -export-header libcusp.h ${MLFLAGS} -link-opt "-L. -lsqlite3" -format library -output $@ $<
+# 	arm-linux-androideabi-strip $@
+# 
+# .libcusp.d:	../cusp/libcusp.mlb
 # 	@echo Analyzing dependencies for $<
 # 	@echo "$@ $*: " `$(MLTON) -stop f $< | grep -v "[ :]\|^/"` > $@.tmp
 # 	@mv $@.tmp $@
