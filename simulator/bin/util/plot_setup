@@ -12,7 +12,7 @@ if [ -z "$clump" ];  then cat <<EOF
 EOF
 else cat << EOF
   g(i)="select\
-          max(time) as time, sum(count) as count,\
+          time, sum(count) as count,\
           min(min) as min, max(max) as max,\
           sum(sum) as sum, sum(sum2) as sum2,\
           sum(sum)/sum(count) as avg,\
