@@ -41,6 +41,8 @@ typedef int32_t Handle;
 // Handle utilities (for internal use)
 //
 
+extern bool bsLibInitialized;
+
 #ifdef NDEBUG
 #define ASSERT_CALL_TRUE(x) x
 #else
@@ -48,7 +50,7 @@ typedef int32_t Handle;
 #endif
 
 #define HANDLE_NONE -1
-#define IS_VALID_HANDLE(h) (h >= 0)
+#define IS_VALID_HANDLE(h) (bsLibInitialized && (h >= 0))
 #define ASSERT_HANDLE(h) assert(h >= 0)
 
 #define RESULT_EXCEPTION -3

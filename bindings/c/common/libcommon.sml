@@ -171,6 +171,22 @@ fun handleExceptionData (function, outLen) params =
    end
 
 
+(* notify C part that SML part has been initialized/closed *)
+fun smlOpened () =
+   let
+      val openedFn = _import "bs_lib_opened" public : unit -> unit;
+   in
+      openedFn ()
+   end
+fun smlClosed () =
+   let
+      val closedFn = _import "bs_lib_closed" public : unit -> unit;
+   in
+      closedFn ()
+   end
+val () = smlOpened ()
+val () = OS.Process.atExit smlClosed
+
 (* -------------------- *
  *  Exported functions  *
  * -------------------- *)
