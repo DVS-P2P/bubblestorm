@@ -34,7 +34,7 @@ class BufferedOutStream : private OutStream::WriteHandler
 		};
 		
 		BufferedOutStream(const OutStream& os, Handler* handler);
-		~BufferedOutStream();
+		virtual ~BufferedOutStream();
 
 		void write(const void* data, int size);
 		float getPriority() const;
