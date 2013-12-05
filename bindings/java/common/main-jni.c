@@ -57,10 +57,6 @@ static jclass cuspClass;
 static int asyncHandle;
 static int asyncFD;
 
-// library open/close handler functions, not used here
-void bs_lib_opened() {}
-void bs_lib_closed() {}
-
 //
 // helper functions
 //

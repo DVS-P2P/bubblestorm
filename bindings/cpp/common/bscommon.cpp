@@ -22,17 +22,6 @@
 // SML library initialization notification
 //
 
-bool bsLibInitialized = false;
-
-extern "C" {
-	void bs_lib_opened() {
-		bsLibInitialized = true;
-	}
-	void bs_lib_closed() {
-		bsLibInitialized = false;
-	}
-}
-
 namespace BS {
 
 //
