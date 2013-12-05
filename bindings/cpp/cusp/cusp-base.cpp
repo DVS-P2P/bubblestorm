@@ -273,7 +273,6 @@ Host::Host(Handle handle)
 }
 
 Host::Host(const Host& h)
-	: handle(handle)
 {
 	if (IS_VALID_HANDLE(h.handle)) {
 		handle = cusp_host_dup(h.handle);
@@ -463,7 +462,6 @@ Host::Iterator::Iterator(Handle handle)
 }
 
 Host::Iterator::Iterator(const Host::Iterator& i)
-	: handle(handle)
 {
 	if (IS_VALID_HANDLE(i.handle)) {
 		handle = cusp_host_iterator_dup(i.handle);
@@ -528,7 +526,6 @@ Channel::Iterator::Iterator(Handle handle)
 }
 
 Channel::Iterator::Iterator(const Channel::Iterator& h)
-	: handle(handle)
 {
 	if (IS_VALID_HANDLE(h.handle)) {
 		handle = cusp_channel_iterator_dup(h.handle);
@@ -697,7 +694,6 @@ InStream::Iterator::Iterator(Handle handle)
 }
 
 InStream::Iterator::Iterator(const InStream::Iterator& i)
-	: handle(handle)
 {
 	if (IS_VALID_HANDLE(i.handle)) {
 		handle = cusp_instream_iterator_dup(i.handle);
@@ -885,7 +881,6 @@ OutStream::Iterator::Iterator(Handle handle)
 }
 
 OutStream::Iterator::Iterator(const OutStream::Iterator& i)
-	: handle(handle)
 {
 	if (IS_VALID_HANDLE(i.handle)) {
 		handle = cusp_outstream_iterator_dup(i.handle);
