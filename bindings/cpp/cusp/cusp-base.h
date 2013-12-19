@@ -185,6 +185,7 @@ class OutStream
 				/// Callback for a shutdown, indicating the success of the
 				/// operation.
 				virtual void onShutdown(bool success) = 0;
+				virtual ~ShutdownHandler() {}
 		};
 		
 		/// Returns the stream's current priority.

@@ -28,6 +28,7 @@ class AbortableContactHandler : public EndPoint::ContactHandler
 {
 	public:
 		AbortableContactHandler(EndPoint::ContactHandler& handler);
+		virtual ~AbortableContactHandler();
 		void abort();
 		
 		// EndPoint::ContactHandler implementation

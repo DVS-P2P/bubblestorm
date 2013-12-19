@@ -26,6 +26,10 @@ AbortableContactHandler::AbortableContactHandler(EndPoint::ContactHandler& handl
 {
 }
 
+AbortableContactHandler::~AbortableContactHandler()
+{
+}
+
 void AbortableContactHandler::abort()
 {
 	handler = NULL;
