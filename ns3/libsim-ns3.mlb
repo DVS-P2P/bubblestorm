@@ -33,6 +33,6 @@ in
       ../cusp/demo/cusp-test.mlb
       ../cusp/demo/reader.mlb
       ../cusp/demo/sendzeros.mlb
-      ../bubblestorm/query/demo.mlb
+(*       ../bubblestorm/query/demo.mlb *)
    end
 end

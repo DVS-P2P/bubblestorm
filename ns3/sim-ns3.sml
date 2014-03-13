@@ -37,10 +37,14 @@ in
          structure Writer = StdoutNodeWriter
       )
    (* GlobalLog *)
+   val globalPrintBuffer = ref nil (* TODO? *)
    structure GlobalLog =
-      GlobalLog(
+      Log(
          structure Event = SimulatorMain.Event
          structure Writer = StdoutWriter
+         val node = fn () => NONE
+         val address = fn () => "global"
+         val printBuffer = fn () => globalPrintBuffer
       )
    (* add log filter command line support *)
 (*    structure CommandLine = LogCommandLine(Log) *)
@@ -90,11 +94,12 @@ in
          Statistics(
             structure Helper = StatisticsHelper
             structure Writer = StatsWriter
+            structure Event = SimulatorMain.Event
          )
    end
    local
       fun statisticsLogInterval intervalNs =
-         Statistics.logInterval (Time.fromNanoseconds64 intervalNs)
+         Statistics.setLogInterval (Time.fromNanoseconds64 intervalNs)
    in
       val () = _export "bs_statistics_log_interval" : (Int64.int -> unit) -> unit; statisticsLogInterval
    end

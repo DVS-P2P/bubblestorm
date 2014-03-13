@@ -17,4 +17,4 @@
 *)
 
 signatures.mlb
-../sim-ns3/virtual-system.mlb
+../ns3/virtual-system.mlb

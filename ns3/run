@@ -1,2 +1,2 @@
 #!/bin/sh
-LD_LIBRARY_PATH=`pwd`/src ./waf --run bs-sim
+LD_LIBRARY_PATH=`pwd`/src ./waf --run bs-sim-p4

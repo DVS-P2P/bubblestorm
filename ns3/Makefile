@@ -20,9 +20,9 @@ clean:
 # 	LD_LIBRARY_PATH=`pwd` ./waf --run bs-sim --command-template="gdb --args %s"
 
 # default compile options
-MLFLAGS=-drop-pass 'deepFlatten'
+# MLFLAGS=-drop-pass 'deepFlatten'
 # for useful stack traces
-# MLFLAGS=@MLton gc-summary -- -profile-val true -profile-branch true -verbose 2 -drop-pass 'deepFlatten' -const 'Exn.keepHistory true'
+MLFLAGS=@MLton gc-summary -- -profile-val true -profile-branch true -verbose 2 -drop-pass 'deepFlatten' -const 'Exn.keepHistory true'
 # for profiling
 # use mlprof -show-lines true simulator mlmon.out after running the simulator
 # the database name doesn't get parsed correctly with profiling, 

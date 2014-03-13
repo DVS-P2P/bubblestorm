@@ -43,6 +43,10 @@ in
          (* Log *)
          node-log.fun
          
+         ../simulator/statistics/simulator-statistics-helper.sml
+         ../simulator/statistics/simulator-statistics-writer.sml
+         ../simulator/statistics/statistics.sml
+         
          (* Entropy *)
          ../system/entropy-mlton.sml (* FIXME!? *)
          
@@ -51,7 +55,6 @@ in
          address.sml
          node-udp.sml
       in
-         host-cache.sml (* TODO proper implementation *)
          signature MAIN
          structure Entropy
          structure SimultaneousDump

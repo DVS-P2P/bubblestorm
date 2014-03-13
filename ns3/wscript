@@ -1,12 +1,18 @@
 ## -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
 
 def build(bld):
-	obj = bld.create_ns3_program('bs-sim', ['core', 'simulator', 'point-to-point', 'internet-stack'])
-	obj.source = ['src/bs-sim.cc', 'src/bs-log.cc', 'src/bs-statistics.cc', 'src/bs-app.cc', 'src/bs-event.cc', 'src/bs-udp.cc']
-	obj.libpath = '/home/mlehn/devel/BubbleStorm/Middleware/sim-ns3'
-	obj.lib = 'sim-ns3'
-	
-	obj = bld.create_ns3_program('bs-sim-p4', ['core', 'simulator', 'point-to-point', 'internet-stack'])
-	obj.source = ['src/bs-sim-p4.cc', 'src/bs-log.cc', 'src/bs-statistics.cc', 'src/bs-app.cc', 'src/bs-event.cc', 'src/bs-udp.cc']
-	obj.libpath = ['/home/mlehn/devel/planetp4/planetp4/simulator', '/home/mlehn/devel/BubbleStorm/Middleware/bindings/cpp/bubblestorm']
-	obj.lib = ['sim-ns3', 'planetp4sim', 'bubblestormcpp-sim', 'gmp', 'm', 'sqlite3', 'Irrlicht', 'png', 'jpeg', 'bz2', 'GL', 'Xxf86vm']
+    obj = bld.create_ns3_program('bs-sim', ['core', 'internet', 'point-to-point'])
+    obj.source = obj.path.ant_glob(['src/*.cc', "src/experiments/bs-sim.cc"])
+    obj.libpath = '/home/mlehn/devel/BubbleStorm/Middleware/ns3'
+    obj.lib = ['sim-ns3', 'sqlite3']
+    obj.target = 'bs-sim'
+    obj.name = obj.target
+    obj.install_path = None
+    
+    obj = bld.create_ns3_program('bs-sim-p4', ['core', 'internet', 'point-to-point'])
+    obj.source = obj.path.ant_glob(['src/*.cc', "src/experiments/bs-sim-p4.cc"])
+    obj.libpath = '/home/mlehn/devel/BubbleStorm/Middleware/ns3'
+    obj.lib = ['sim-ns3', 'planetp4sim', 'bubblestormcpp-sim', 'gmp', 'm', 'sqlite3', 'Irrlicht', 'png', 'jpeg', 'bz2', 'GL', 'Xxf86vm']
+    obj.target = 'bs-sim-p4'
+    obj.name = obj.target
+    obj.install_path = None

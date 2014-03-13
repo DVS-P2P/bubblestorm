@@ -52,14 +52,14 @@ functor NodeLog (structure Event : EVENT
                      SOME ip => Address.Ip.toString ip
                    | NONE =>*) "---"
                in
-                  Writer.write (
-                       Event.time (),
-                       id,
-                       address,
-                       level,
-                       module (), 
-                       msg ()
-                    )
+                  Writer.write {
+                       time = Event.time (),
+                       node = id,
+                       address = address,
+                       level = level,
+                       module = module (), 
+                       message = msg ()
+                    }
                end
             else ()
          end
