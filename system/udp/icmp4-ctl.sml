@@ -23,9 +23,9 @@ local
    val message = aggregate tuple6 `word32b `word32b `word16b `word16b `word16b `word16b $
    fun fromAddr addr =
       case INetSock.fromAddr addr of (ip, port) =>
-      (fromVector (MLton.Socket.Address.toVector ip), port)
+      (fromVector ((*MLton.Socket.Address.toVector*) ip), port)
    fun toAddr (ip, port) =
-      INetSock.toAddr (MLton.Socket.Address.fromVector (toVector ip), port)
+      INetSock.toAddr ((*MLton.Socket.Address.fromVector*) (toVector ip), port)
 in
    structure ICMP4ctl =
       struct

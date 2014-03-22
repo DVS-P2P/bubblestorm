@@ -85,10 +85,14 @@ fun asyncHandlerCreate (handlerCb : ptr, cbData : ptr) : int =
       IdBucket.alloc (asyncHandlerBucket, (sockIn, unhook))
    end
 
-fun asyncHandlerGetSocket (aHandle : int) : Socket.active INetSock.stream_sock =
+(* HACK: need a ~1 as Socket.sock_desc, conversion is gone since MLton.Socket has been removed *)
+val () = _export "fakeInvalidSd" private: (unit -> int) -> unit; (fn () => ~1)
+val invalidSd = _import "fakeInvalidSd" : unit -> Socket.sock_desc;
+
+fun asyncHandlerGetSocket (aHandle : int) : Socket.sock_desc =
    case IdBucket.sub (asyncHandlerBucket, aHandle) of
-      SOME (sock, _) => sock
-    | NONE => MLton.Socket.fdToSock (Posix.FileSys.wordToFD 0wxffffffff)
+      SOME (sock, _) => Socket.sockDesc sock
+    | NONE => invalidSd ()
 
 fun asyncHandlerDelete (aHandle : int) : bool =
    case IdBucket.sub (asyncHandlerBucket, aHandle) of
@@ -111,7 +115,7 @@ val () = _export "evt_process_events" : (unit -> unit) -> unit; processEvents
 
 (* Async handler functions *)
 val () = _export "evt_asynchandler_create" : (ptr * ptr -> int) -> unit; asyncHandlerCreate
-val () = _export "evt_asynchandler_get_socket" : (int -> Socket.active INetSock.stream_sock) -> unit; asyncHandlerGetSocket
+val () = _export "evt_asynchandler_get_socket" : (int -> Socket.sock_desc) -> unit; asyncHandlerGetSocket
 val () = _export "evt_asynchandler_delete" : (int -> bool) -> unit; asyncHandlerDelete
 val () = _export "evt_asynchandler_dup" : (int -> int) -> unit; asyncHandlerDup
 val () = _export "evt_asynchandler_free" : (int -> bool) -> unit; asyncHandlerFree

@@ -34,13 +34,13 @@ structure IPv4 : ADDRESS =
             store = fn addr =>
                let
                   val (netdb, port) = INetSock.fromAddr addr
-                  val v = MLton.Socket.Address.toVector netdb
+                  val v = (*MLton.Socket.Address.toVector*) netdb
                in
                   (v, Word16.fromInt port)
                end,
             load  = fn (ip, port) =>
                let
-                  val netdb = MLton.Socket.Address.fromVector ip
+                  val netdb = (*MLton.Socket.Address.fromVector*) ip
                in
                   INetSock.toAddr (netdb, Word16.toInt port)
                end,
@@ -69,7 +69,7 @@ structure IPv4 : ADDRESS =
             val (ip, port) = INetSock.fromAddr x
          in
             Hash.int port o
-            Hash.word8vector (MLton.Socket.Address.toVector ip)
+            Hash.word8vector ((*MLton.Socket.Address.toVector*) ip)
          end
 
       fun addrFromString str =

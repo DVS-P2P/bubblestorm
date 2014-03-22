@@ -69,7 +69,7 @@ structure ICMP4FFI : ICMP_PRIMITIVE =
                         fun addr (ip, port) =
                            let
                               val ip = Word8Array.vector ip
-                              val ip = MLton.Socket.Address.toVector ip
+(*                               val ip = MLton.Socket.Address.toVector ip *)
                            in
                               INetSock.toAddr (ip, port)
                            end
@@ -102,10 +102,10 @@ structure ICMP4FFI : ICMP_PRIMITIVE =
                         val (udp, udpoff, udplen) = Word8ArraySlice.base data
                         val (to, toport) = INetSock.fromAddr UDPto
                         val (from, fromport) = INetSock.fromAddr UDPfrom
-                        val to = MLton.Socket.Address.fromVector to
-                        val from = MLton.Socket.Address.fromVector from
+(*                         val to = MLton.Socket.Address.fromVector to *)
+(*                         val from = MLton.Socket.Address.fromVector from *)
                         val ok =
-                           icmp_send (state, udp, udpoff, udplen, 
+                           icmp_send (state, udp, udpoff, udplen,
                                       to, toport, from, fromport, code)
                      in
                         if ok = 0 then () else
