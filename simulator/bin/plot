@@ -8,13 +8,18 @@ script=`basename $command`
 # init
 source $path/util/plot_init
 
+ylabel="${labels[0]} (${units[0]})"
+if [ $node -ge 0 ]; then
+	ylabel="$ylabel node $node"
+fi
+
 gnuplot -persist <<EOF
 $(source $setup_sh)
 
 set xdata time
 set format x "%H:%M:%S"
 set xlabel "Simulated time"
-set ylabel "${labels[0]} (${units[0]})"
+set ylabel "${ylabel}"
 
 $($labels_sh "${dbs[0]}" "${statIDs[0]}")
 plot \
