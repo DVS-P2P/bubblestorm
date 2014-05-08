@@ -111,10 +111,10 @@ class Time
 		
 		int64_t toNanoseconds() const
 			{ return time; };
-		int toMicroseconds() const
-			{ return (int) (time / 1000LL); };
-		int toMilliseconds() const
-			{ return (int) (time / 1000000LL); };
+		int64_t toMicroseconds() const
+			{ return time / 1000LL; };
+		int64_t toMilliseconds() const
+			{ return time / 1000000LL; };
 		
 		Time operator +(const Time& t) const
 			{ return Time(time + t.time); }
