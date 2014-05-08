@@ -9,7 +9,7 @@ script=`basename $command`
 source $path/util/plot_init
 
 gnuplot -persist <<EOF
-$(source $setup)
+$(source $setup_sh)
 
 set xdata time
 set format x "%H:%M"
