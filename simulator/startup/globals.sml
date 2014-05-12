@@ -53,3 +53,5 @@ open Log
 structure GlobalEvent = Experiment.Event
 (* export experiment for simulator-specific operations (e.g., in PlanetPI4) *)
 structure Experiment = Experiment
+(* export simulator node to obtain current node ID (PlanetPI4) *)
+structure SimulatorNode = SimulatorNode
