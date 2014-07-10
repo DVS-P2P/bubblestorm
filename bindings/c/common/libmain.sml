@@ -86,7 +86,7 @@ fun asyncHandlerCreate (handlerCb : ptr, cbData : ptr) : int =
    end
 
 (* HACK: need a ~1 as Socket.sock_desc, conversion is gone since MLton.Socket has been removed *)
-val () = _export "fakeInvalidSd" private: (unit -> int) -> unit; (fn () => ~1)
+(* val () = _export "fakeInvalidSd" private: (unit -> int) -> unit; (fn () => ~1) -> now in libmain.c *)
 val invalidSd = _import "fakeInvalidSd" : unit -> Socket.sock_desc;
 
 fun asyncHandlerGetSocket (aHandle : int) : Socket.sock_desc =

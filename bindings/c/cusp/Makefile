@@ -26,16 +26,16 @@ clean:
 MLFLAGS = 
 
 %.a:	%.mlb .%.d
-	$(MLTON) -export-header $*.h ${MLFLAGS} -format archive $<
+	$(MLTON) -export-header $*.h ${MLFLAGS} -format archive $< ../common/libmain.c
 
 %.so:	%.mlb .%.d
-	$(MLTON) -export-header $*.h ${MLFLAGS} -format library $<
+	$(MLTON) -export-header $*.h ${MLFLAGS} -format library $< ../common/libmain.c
 
 %.dylib: %.mlb .%.d
-	$(MLTON) -export-header $*.h ${MLFLAGS} -format library $<
+	$(MLTON) -export-header $*.h ${MLFLAGS} -format library $< ../common/libmain.c
 
 %.dll:	lib%.mlb .lib%.d
-	$(MLTON) -export-header lib$*.h ${MLFLAGS} -link-opt "-L." -format library $<
+	$(MLTON) -export-header lib$*.h ${MLFLAGS} -link-opt "-L." -format library $< ../common/libmain.c
 
 .%.d:	%.mlb
 	@echo Analyzing dependencies for $<
