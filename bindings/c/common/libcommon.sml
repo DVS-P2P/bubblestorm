@@ -357,6 +357,7 @@ val logRemoveFilter = handleExceptionInt logRemoveFilter
 
 fun statisticsNew (namePtr : ptr, nameLen : int,
       unitPtr : ptr, unitLen : int,
+      labelPtr : ptr, labelLen : int,
       parentHandle : int, parentMode : int,
       histogramMode : int, histogramParam : Real32.real,
       persistent : bool) : int =
@@ -388,7 +389,7 @@ fun statisticsNew (namePtr : ptr, nameLen : int,
                   parents = parents,
                   name = getString (namePtr, nameLen),
                   units = getString (unitPtr, unitLen),
-                  label = getString (namePtr, nameLen),
+                  label = getString (labelPtr, labelLen),
                   histogram = hist,
                   persistent = persistent
                }), statIdBucketStatistics)
@@ -488,7 +489,7 @@ val () = _export "sys_log_addfilter" : (ptr * int * int -> int) -> unit; logAddF
 val () = _export "sys_log_removefilter" : (ptr * int -> int) -> unit; logRemoveFilter
 
 (* Statistics functions *)
-val () = _export "sys_statistics_new" : (ptr * int * ptr * int * int * int * int * Real32.real * bool -> int) -> unit; statisticsNew
+val () = _export "sys_statistics_new" : (ptr * int * ptr * int * ptr * int * int * int * int * Real32.real * bool -> int) -> unit; statisticsNew
 val () = _export "sys_statistics_addpoll" : (int * ptr * ptr -> int) -> unit; statisticsAddPoll
 val () = _export "sys_statistics_add" : (int * Real32.real -> int) -> unit; statisticsAdd
 val () = _export "sys_statistics_dup" : (int -> int) -> unit; statisticsDup

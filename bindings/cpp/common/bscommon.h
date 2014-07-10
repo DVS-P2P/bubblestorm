@@ -249,7 +249,7 @@ class Statistics
 		
 		/// Creates a new statistics object.
 		static Statistics create(const std::string& name,
-				const std::string& unit = "",
+				const std::string& unit = "", const std::string& label = "",
 				Statistics parent = Statistics(), ParentMode parentMode = AVG,
 				HistogramMode hist = NO_HISTOGRAM, float histParam = 0.0f,
 				bool persistent = true);

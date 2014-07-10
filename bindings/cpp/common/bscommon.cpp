@@ -258,14 +258,14 @@ void Log::log(Severity severity, const std::string& module, const std::string& m
 //
 
 Statistics Statistics::create(const std::string& name,
-		const std::string& unit,
+		const std::string& unit, const std::string& label,
 		Statistics parent, ParentMode parentMode,
 		HistogramMode hist, float histParam,
 		bool persistent)
 {
 	Handle parentHandle = parent.isValid() ? parent.handle : -1;
 	Handle h = sys_statistics_new((char*) name.data(), name.size(),
-			(char*) unit.data(), unit.size(),
+			(char*) unit.data(), unit.size(), (char*) label.data(), label.size(),
 			parentHandle, parentMode, hist, histParam, persistent);
 	checkResult(h);
 	return Statistics(h);
