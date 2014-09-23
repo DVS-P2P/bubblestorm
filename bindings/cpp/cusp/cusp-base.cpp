@@ -18,9 +18,16 @@
 
 #include "cusp.h"
 
-#include <assert.h>
-#include <string.h>
+// use stack instead of heap allocations when reading from SML
+#define STACK_ALLOC
+
+#include <cassert>
+#include <cstring>
+#include <cstdlib>
 #include <algorithm>
+#ifdef STACK_ALLOC
+#include <alloca.h>
+#endif
 
 namespace BS {
 namespace CUSP {
@@ -664,11 +671,17 @@ void InStream::readCallback(int32_t count, int32_t ofs, void* data,
 	assert(userData);
 	if (count >= 0) {
 		// have to copy data which could be garbage collected after next ML call
+#ifndef STACK_ALLOC
 		void* buf = malloc((size_t) count);
+#else
+		void* buf = alloca((size_t) count);
+#endif
 		assert(buf);
 		memcpy(buf, ((char*) data) + ofs, (size_t) count);
 		((ReadHandler*) userData)->onReceive(buf, count);
+#ifndef STACK_ALLOC
 		free(buf);
+#endif
 	} else if (count == -2)
 		((ReadHandler*) userData)->onShutdown();
 	else if (count == -1)
