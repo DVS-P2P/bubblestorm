@@ -1,10 +1,6 @@
 #! /bin/bash
-# Absolute path to this script, e.g. /home/user/bin/foo.sh
-command=$(readlink -f $0)
 # Absolute path this script is in, e.g. /home/user/bin
-path=`dirname $command`
-# Basemame of this script, e.g. foo
-script=`basename $command`
+path="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 # init
 source $path/util/plot_init
 
