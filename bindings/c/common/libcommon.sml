@@ -75,7 +75,8 @@ val statIdBucketStatistics = makeBucketStat "statistics"
 val nanReal32 : Real32.real = 0.0/0.0
 
 val nullString = ""
-val nullData = Word8Vector.tabulate (0, fn _ => 0w0)
+val nullVector = Word8Vector.tabulate (0, fn _ => 0w0)
+val nullArray = Word8Array.tabulate (0, fn _ => 0w0)
 
 fun returnBool false = 0
  |  returnBool true  = 1
@@ -96,10 +97,34 @@ fun returnDataVector (SOME data, dataLen) =
    ; data)
  |  returnDataVector (NONE, dataLen) =
    (MLton.Pointer.setInt32 (dataLen, 0, Int32.fromInt (~1))
-   ; nullData)
+   ; nullVector)
+
+fun returnDataArray (SOME data, dataLen) =
+   (MLton.Pointer.setInt32 (dataLen, 0, Int32.fromInt (Word8Array.length data))
+   ; data)
+ |  returnDataArray (NONE, dataLen) =
+   (MLton.Pointer.setInt32 (dataLen, 0, Int32.fromInt (~1))
+   ; nullArray)
+
+(* Returns the data slice as array, with length and offset *)
+fun returnDataArraySlice (SOME data, dataOfs, dataLen) =
+   let
+      val (arr, ofs, len) = Word8ArraySlice.base data
+      val () = MLton.Pointer.setInt32 (dataOfs, 0, ofs)
+      val () = MLton.Pointer.setInt32 (dataLen, 0, len)
+   in
+      arr
+   end
+ |  returnDataArraySlice (NONE, dataOfs, dataLen) =
+   (MLton.Pointer.setInt32 (dataOfs, 0, Int32.fromInt (~1))
+   ; MLton.Pointer.setInt32 (dataLen, 0, Int32.fromInt (~1))
+   ; nullArray)
 
 fun getDataVector (data : ptr, len : int) : Word8Vector.vector =
    Word8Vector.tabulate (len, fn i => MLton.Pointer.getWord8 (data, i))
+
+fun getDataArray (data : ptr, len : int) : Word8Array.array =
+   Word8Array.tabulate (len, fn i => MLton.Pointer.getWord8 (data, i))
 
 (* Returning stings from C helper *)
 
@@ -161,7 +186,7 @@ fun handleExceptionString (function, outLen) params =
    end
 fun handleExceptionData (function, outLen) params =
    let (* for strings and data, exceptions are indicated by outLen=~3 *)
-      val res = handleException (function, nullData) params
+      val res = handleException (function, nullVector) params
       val () =
          if (!lastExceptionHandle >= 0)
          then MLton.Pointer.setInt32 (outLen, 0, Int32.fromInt (~3))

@@ -33,12 +33,14 @@ val outstreamBucket : OutStream.t IdBucket.t = IdBucket.new ()
 val outstreamIteratorBucket : OutStream.t Iterator.t IdBucket.t = IdBucket.new ()
 val publickeyBucket : Crypto.PublicKey.t IdBucket.t = IdBucket.new ()
 val privatekeyBucket : Crypto.PrivateKey.t IdBucket.t = IdBucket.new ()
+val udpBucket : UDP4.t IdBucket.t = IdBucket.new()
 
 (* Bucket statistics *)
 val statIdBucketAddress = makeBucketStat "address"
 val statIdBucketHost = makeBucketStat "host"
 val statIdBucketInstream = makeBucketStat "instream"
 val statIdBucketOutstream = makeBucketStat "outstream"
+val statIdBucketUDP = makeBucketStat "udp"
 
 
 (* --- EndPoint --- *)
@@ -785,6 +787,56 @@ val privatekeyPubkey = handleExceptionInt privatekeyPubkey
 val (privatekeyDup, privatekeyFree) = bucketOps privatekeyBucket
 
 
+(* --- UDP --- *)
+
+fun udpNew (port : int, cb : ptr, cbData : ptr) : int =
+   let
+      val portOpt = if port >= 0 then SOME port else NONE
+      val dataReadyP = _import * : ptr -> ptr -> unit;
+      fun dataReady () = (dataReadyP cb) cbData
+   in
+      bucketStat (
+         IdBucket.alloc (
+            udpBucket,
+            UDP4.new (portOpt, dataReady)),
+         statIdBucketUDP)
+   end
+val udpNew = handleExceptionInt udpNew
+
+fun udpSend (udpHandle : int, addrHandle : int, data : ptr, dataLen : int) : int =
+   let
+      val dataArray = Word8ArraySlice.full (getDataArray (data, dataLen))
+   in
+      case IdBucket.sub (udpBucket, udpHandle) of
+         SOME udp =>
+            (case IdBucket.sub (addressBucket, addrHandle) of
+               SOME addr => if UDP4.send (udp, addr, dataArray) then 0 else ~2
+             | NONE => ~1
+            )
+       | NONE => ~1
+   end
+val udpSend = handleExceptionInt udpSend
+
+fun udpRecv (udpHandle : int, dataOfs : ptr, dataLen : ptr, addrHandleP : ptr) : Word8Array.array =
+   let
+      val out =
+         case IdBucket.sub (udpBucket, udpHandle) of
+            SOME udp => UDP4.recv (udp,
+               Word8ArraySlice.full (Word8Array.tabulate (UDP4.maxMTU, fn _ => 0w0)))
+          | NONE => NONE
+      val (addrHandle, rcvd) =
+         case out of
+            SOME (a, r) =>
+               (bucketStat (IdBucket.alloc (addressBucket, a), statIdBucketAddress),
+                SOME r)
+          | NONE => (~1, NONE)
+      val () = MLton.Pointer.setInt32 (addrHandleP, 0, Int32.fromInt addrHandle)
+   in
+      returnDataArraySlice (rcvd, dataOfs, dataLen)
+   end
+(* TODO val udpRecv = handleExceptionInt udpRecv *)
+
+
 (* --------- *
  *  Exports  *
  * --------- *)
@@ -911,3 +963,7 @@ val () = _export "cusp_privatekey_pubkey" : (int * Word16.word -> int) -> unit; 
 val () = _export "cusp_privatekey_dup" : (int -> int) -> unit; privatekeyDup
 val () = _export "cusp_privatekey_free" : (int -> bool) -> unit; privatekeyFree
 
+(* UDP functions *)
+val () = _export "cusp_udp_new" : (int * ptr * ptr -> int) -> unit; udpNew
+val () = _export "cusp_udp_send" : (int * int * ptr * int -> int) -> unit; udpSend
+val () = _export "cusp_udp_recv" : (int * ptr * ptr * ptr -> Word8Array.array) -> unit; udpRecv

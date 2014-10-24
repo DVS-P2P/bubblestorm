@@ -778,6 +778,45 @@ class EndPoint
 		friend class Channel;
 };
 
+
+class UDP
+{
+	public:
+		class DataReadyHandler {
+			public:
+			/// Invoked when data is available for read.
+			virtual void onDataReady() = 0;
+		};
+		
+		static UDP create(DataReadyHandler* dataReady);
+		static UDP create(int port, DataReadyHandler* dataReady);
+		
+		/// Uninitialized endpoint constructor. Use the create() method
+		/// to create a usable endpoint.
+		UDP();
+		UDP(Handle handle);
+		/// Copy constructor. Creates a new handle on SML side.
+		UDP(const UDP& u);
+		/// Destructor. Frees SML handle.
+		~UDP();
+		/// Swaps the given endpoint with this one.
+		void swap(UDP& u);
+		/// Asignment operator.
+		UDP& operator =(const UDP& u);
+		/// Checks for endpoint (handle) validity. Any methods operating on
+		/// the end point will only work if this method returns true.
+		bool isValid() const;
+		/// Returns the SML handle. For internal use only.
+		Handle getHandle() const { return handle; };
+		
+		bool send(const Address& addr, const void* data, int size);
+		const void* recv(Address& addr, int& size);
+
+	private:
+		Handle handle;
+		static void dataReadyCallback(void* userData);
+};
+
 };}; // namespace BS::CUSP
 
 #endif

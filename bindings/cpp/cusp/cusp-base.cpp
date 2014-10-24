@@ -1218,4 +1218,94 @@ PublicKey PrivateKey::pubkey(PublicKeySuite suite) const
 }
 
 
+//
+// UDP
+//
+
+UDP UDP::create(DataReadyHandler* dataReady)
+{
+	return UDP::create(-1, dataReady);
+}
+
+UDP UDP::create(int port, DataReadyHandler* dataReady)
+{
+	Handle handle = checkResult(cusp_udp_new(port, (void*) dataReadyCallback, dataReady));
+	return UDP(handle);
+}
+
+UDP::UDP()
+	: handle(HANDLE_NONE)
+{
+}
+
+UDP::UDP(const UDP& u)
+{
+	if (IS_VALID_HANDLE(u.handle)) {
+		handle = cusp_endpoint_dup(u.handle);
+		ASSERT_HANDLE(handle);
+	} else
+		handle = HANDLE_NONE;
+}
+
+UDP::UDP(Handle handle)
+	: handle(handle)
+{
+	ASSERT_HANDLE(handle);
+}
+
+UDP::~UDP()
+{
+	if (IS_VALID_HANDLE(handle))
+		ASSERT_CALL_TRUE(cusp_endpoint_free(handle));
+}
+
+void UDP::swap(UDP& u)
+{
+	std::swap(u.handle, handle);
+}
+
+UDP& UDP::operator =(const UDP& u)
+{
+	UDP udp(u);
+	swap(udp);
+	return *this;
+}
+
+bool UDP::isValid() const
+{
+	return IS_VALID_HANDLE(handle);
+}
+
+bool UDP::send(const Address& addr, const void* data, int size)
+{
+	ASSERT_HANDLE(handle);
+	return (checkResult(cusp_udp_send(handle, addr.getHandle(), (void*) data, size)) >= 0);
+}
+
+const void* UDP::recv(Address& addr, int& size)
+{
+	ASSERT_HANDLE(handle);
+	int32_t dataOfs;
+	int32_t dataLen;
+	int32_t addrHandle;
+	const void* data = cusp_udp_recv(handle, &dataOfs, &dataLen, &addrHandle);
+	checkResult(dataLen);
+	if (dataLen >= 0) {
+		addr = Address(addrHandle);
+		size = dataLen;
+		return ((uint8_t*) data) + dataOfs;
+	} else {
+		addr = Address();
+		size = 0;
+		return NULL;
+	}
+}
+
+void UDP::dataReadyCallback(void* userData)
+{
+	assert(userData);
+	((DataReadyHandler*) userData)->onDataReady();
+}
+
+
 };}; // namespace BS::CUSP
