@@ -809,6 +809,7 @@ class UDP
 		/// Returns the SML handle. For internal use only.
 		Handle getHandle() const { return handle; };
 		
+		void close();
 		bool send(const Address& addr, const void* data, int size);
 		const void* recv(Address& addr, int& size);
 

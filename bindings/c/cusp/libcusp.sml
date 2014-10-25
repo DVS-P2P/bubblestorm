@@ -803,6 +803,11 @@ fun udpNew (port : int, cb : ptr, cbData : ptr) : int =
    end
 val udpNew = handleExceptionInt udpNew
 
+fun udpClose (udpHandle : int) : int =
+   case IdBucket.sub (udpBucket, udpHandle) of
+      SOME udp => (UDP4.close udp; 0)
+    | NONE => ~1
+
 fun udpSend (udpHandle : int, addrHandle : int, data : ptr, dataLen : int) : int =
    let
       val dataArray = Word8ArraySlice.full (getDataArray (data, dataLen))
@@ -829,12 +834,15 @@ fun udpRecv (udpHandle : int, dataOfs : ptr, dataLen : ptr, addrHandleP : ptr) :
             SOME (a, r) =>
                (bucketStat (IdBucket.alloc (addressBucket, a), statIdBucketAddress),
                 SOME r)
-          | NONE => (~1, NONE)
+          | NONE => (~1, SOME (Word8ArraySlice.full nullArray))
       val () = MLton.Pointer.setInt32 (addrHandleP, 0, Int32.fromInt addrHandle)
    in
       returnDataArraySlice (rcvd, dataOfs, dataLen)
    end
 (* TODO val udpRecv = handleExceptionInt udpRecv *)
+
+
+val (udpDup, udpFree) = bucketOps udpBucket
 
 
 (* --------- *
@@ -965,5 +973,9 @@ val () = _export "cusp_privatekey_free" : (int -> bool) -> unit; privatekeyFree
 
 (* UDP functions *)
 val () = _export "cusp_udp_new" : (int * ptr * ptr -> int) -> unit; udpNew
+val () = _export "cusp_udp_close" : (int -> int) -> unit; udpClose
 val () = _export "cusp_udp_send" : (int * int * ptr * int -> int) -> unit; udpSend
 val () = _export "cusp_udp_recv" : (int * ptr * ptr * ptr -> Word8Array.array) -> unit; udpRecv
+val () = _export "cusp_udp_dup" : (int -> int) -> unit; udpDup
+val () = _export "cusp_udp_free" : (int -> bool) -> unit; udpFree
+

@@ -1241,7 +1241,7 @@ UDP::UDP()
 UDP::UDP(const UDP& u)
 {
 	if (IS_VALID_HANDLE(u.handle)) {
-		handle = cusp_endpoint_dup(u.handle);
+		handle = cusp_udp_dup(u.handle);
 		ASSERT_HANDLE(handle);
 	} else
 		handle = HANDLE_NONE;
@@ -1256,7 +1256,7 @@ UDP::UDP(Handle handle)
 UDP::~UDP()
 {
 	if (IS_VALID_HANDLE(handle))
-		ASSERT_CALL_TRUE(cusp_endpoint_free(handle));
+		ASSERT_CALL_TRUE(cusp_udp_free(handle));
 }
 
 void UDP::swap(UDP& u)
@@ -1276,6 +1276,12 @@ bool UDP::isValid() const
 	return IS_VALID_HANDLE(handle);
 }
 
+void UDP::close()
+{
+	ASSERT_HANDLE(handle);
+	checkResult(cusp_udp_close(handle));
+}
+
 bool UDP::send(const Address& addr, const void* data, int size)
 {
 	ASSERT_HANDLE(handle);
@@ -1290,7 +1296,7 @@ const void* UDP::recv(Address& addr, int& size)
 	int32_t addrHandle;
 	const void* data = cusp_udp_recv(handle, &dataOfs, &dataLen, &addrHandle);
 	checkResult(dataLen);
-	if (dataLen >= 0) {
+	if (dataLen > 0) {
 		addr = Address(addrHandle);
 		size = dataLen;
 		return ((uint8_t*) data) + dataOfs;
