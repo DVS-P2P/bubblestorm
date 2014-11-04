@@ -126,8 +126,10 @@ structure Location :> LOCATION =
                \ INNER JOIN regions r ON ci.region_id = r.id\
                \ INNER JOIN countries cn ON r.country_id = cn.id\
                \ INNER JOIN continents co ON cn.continent_id = co.id\
-               \ ORDER BY h.randVal * "iZ"\
+               \ ORDER BY ((h.randVal % 2147483648) * "iZ") % 2147483648\
                \ LIMIT "iI";" oI oR oR oI $)
+               (* Sqlite integers do not wrap around, so reduce random multiplication to 31 bits.
+                * (Possibly changed in sqlite version 3.8.2.) *)
                handle SQL.Error x => raise At ("simulator/location/hostQueryGlobal", SQL.Error x)
    
             val () = hostQueryFromString := SOME (prepare database
@@ -138,8 +140,11 @@ structure Location :> LOCATION =
                \ INNER JOIN countries cn ON r.country_id = cn.id\
                \ INNER JOIN continents co ON cn.continent_id = co.id\
                \ WHERE co.name = "iS" OR cn.name = "iS" OR\
-               \ r.name = "iS" OR ci.name = "iS" ORDER BY h.randVal * "iZ"\
+               \ r.name = "iS" OR ci.name = "iS"\
+               \ ORDER BY ((h.randVal % 2147483648) * "iZ") % 2147483648\
                \ LIMIT "iI";" oI oR oR oI $)
+               (* Sqlite integers do not wrap around, so reduce random multiplication to 31 bits.
+                * (Possibly changed in sqlite version 3.8.2.) *)
                handle SQL.Error x => raise At ("simulator/location/hostQueryString", SQL.Error x)
    
             val () = hostQueryFromId := SOME (prepare database
@@ -184,12 +189,12 @@ structure Location :> LOCATION =
                (case (CharVector.map Char.toLower name) = "global" of
                   true =>
                         SQL.map sqlResultToHost (hostQueryGlobal ()) (
-                           (Random.int64 (random, valOf Int64.maxInt)) & count
+                           (Random.int64 (random, Int64.fromInt (valOf Int32.maxInt))) & count
                         )
                   | false =>
                         SQL.map sqlResultToHost (hostQueryFromString ()) (
                            name & name & name & name &
-                           (Random.int64 (random, valOf Int64.maxInt)) & count
+                           (Random.int64 (random, Int64.fromInt (valOf Int32.maxInt))) & count
                         ))
             | SOME number => SQL.map sqlResultToHost (hostQueryFromId ()) number
 
