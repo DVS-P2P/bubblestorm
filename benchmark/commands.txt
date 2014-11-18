@@ -1,0 +1,36 @@
+kv-coordinator
+--------------
+
+Supported arguments are:
+-p x, --port x     UDP port to use locally
+-s x, --size x     size of created items in bytes
+-r x, --rate x     created items per minute and client
+-l x, --lifetime x lifetime of an item
+-m, --managed      turns on managed mode (tracking publisher availability)
+
+Console logging (@config <args> --):
+--filter l:x       sets the log filter level of module x to l
+
+Example:
+> ./kv-coordinator @config --filter 1: -- --rate 10
+
+
+kv-[durable,managed,fading]
+---------------------------
+
+Supported arguments are:
+--port x                  UDP port to use locally
+--login x                 addresses of well-known login hosts
+--bootstrap x             address of bootstrap host to contact initially
+--create x                create a new overlay (x is the local IP address)
+--bandwidth x             (upstream) bandwidth (in MBit/s)
+--min-bandwidth x         minimum bandwidth to become a peer (default: 1MBit/s)
+
+Workload coordinator configuration (@workload <args> --):
+--coordinator x           coordinator address
+--keep-alive x            keep-alive interval
+--query-timeout x         query timeout
+
+Examples:
+> ./kv-durable @config --filter 1: -- @workload --coordinator localhost -- --port 8586 --create localhost:8586
+> ./kv-durable @config --filter 1: -- @workload --coordinator localhost -- --bootstrap localhost:8586
