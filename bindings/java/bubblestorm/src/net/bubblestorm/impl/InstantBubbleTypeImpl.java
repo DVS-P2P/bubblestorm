@@ -14,7 +14,7 @@
 
 	You should have received a copy of the GNU General Public License
 	along with BubbleStorm.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 package net.bubblestorm.impl;
 
@@ -23,21 +23,26 @@ import java.util.concurrent.Callable;
 import net.bubblestorm.BSError;
 import net.bubblestorm.BubbleMaster;
 import net.bubblestorm.InstantBubbleType;
+import net.bubblestorm.PersistentBubbleType;
 import net.bubblestorm.jni.BSJni;
+import net.bubblestorm.jni.BaseObject;
 
-public class InstantBubbleTypeImpl extends BasicBubbleTypeImpl implements InstantBubbleType {
+public class InstantBubbleTypeImpl extends BaseObject implements
+		InstantBubbleType {
 
 	//
 	// public interface
 	//
 
-	public static InstantBubbleType create(final BubbleMaster master, final String name,
-			final int id, final float priority) throws BSError {
+	public static InstantBubbleType create(final BubbleMaster master,
+			final String name, final int id, final float priority)
+			throws BSError {
 		return BSJni.call(new Callable<InstantBubbleTypeImpl>() {
 			@Override
 			public InstantBubbleTypeImpl call() throws Exception {
 				// TODO name
-				int h = BSJni.bsBubbleMasterNewInstant(master.getHandle(), id, priority);
+				int h = BSJni.bsBubbleMasterNewInstant(master.getHandle(), id,
+						priority);
 				return new InstantBubbleTypeImpl(BSJni.checkResult(h));
 			}
 		});
@@ -48,23 +53,48 @@ public class InstantBubbleTypeImpl extends BasicBubbleTypeImpl implements Instan
 		BSJni.call(new Callable<Void>() {
 			@Override
 			public Void call() throws Exception {
-				BSJni.checkResult(BSJni.bsBubbleInstantCreate(getHandle(), data));
+				BSJni.checkResult(BSJni
+						.bsBubbleInstantCreate(getHandle(), data));
 				return null;
 			}
 		});
+	}
+
+	@Override
+	public void match(PersistentBubbleType with, double lambda,
+			BubbleHandler bubbleHandler) throws BSError {
+		basic.match(with, lambda, bubbleHandler);
+	}
+
+	@Override
+	public int defaultSize() throws BSError {
+		return basic.defaultSize();
+	}
+
+	@Override
+	public int typeId() throws BSError {
+		return basic.typeId();
 	}
 
 	//
 	// protected
 	//
 
-	protected InstantBubbleTypeImpl(int handle) {
+	protected InstantBubbleTypeImpl(int handle) throws BSError {
 		super(handle);
+		final int basicHandle = BSJni.checkResult(BSJni.bsBubbleTypeInstantBasic(handle));
+		basic = new BasicBubbleTypeImpl(basicHandle);
 	}
 
 	@Override
 	protected boolean free(int handle) {
 		return BSJni.bsBubbleTypeInstantFree(handle);
 	}
+
+	//
+	// private
+	//
+
+	private BasicBubbleTypeImpl basic;
 
 }

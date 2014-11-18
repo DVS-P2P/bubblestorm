@@ -178,8 +178,8 @@ public class ManagedBubbleTypeImpl extends BaseObject implements ManagedBubbleTy
 
 	protected ManagedBubbleTypeImpl(int handle) throws BSError {
 		super(handle);
-		int basicHandle = BSJni.checkResult(BSJni.bsBubbleTypeManagedBasic(handle));
-		int persistentHandle = BSJni.checkResult(BSJni.bsBubbleTypeManagedPersistent(handle));
+		final int basicHandle = BSJni.checkResult(BSJni.bsBubbleTypeManagedBasic(handle));
+		final int persistentHandle = BSJni.checkResult(BSJni.bsBubbleTypeManagedPersistent(handle));
 		persistent = new PersistentBubbleTypeImpl(persistentHandle, basicHandle);
 	}
 

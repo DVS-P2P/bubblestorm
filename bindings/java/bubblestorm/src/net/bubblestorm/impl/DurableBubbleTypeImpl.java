@@ -251,8 +251,8 @@ public class DurableBubbleTypeImpl extends BaseObject implements DurableBubbleTy
 
 	protected DurableBubbleTypeImpl(int handle) throws BSError {
 		super(handle);
-		int basicHandle = BSJni.checkResult(BSJni.bsBubbleTypeDurableBasic(handle));
-		int persistentHandle = BSJni.checkResult(BSJni.bsBubbleTypeDurablePersistent(handle));
+		final int basicHandle = BSJni.checkResult(BSJni.bsBubbleTypeDurableBasic(handle));
+		final int persistentHandle = BSJni.checkResult(BSJni.bsBubbleTypeDurablePersistent(handle));
 		persistent = new PersistentBubbleTypeImpl(persistentHandle, basicHandle);
 	}
 
