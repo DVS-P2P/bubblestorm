@@ -50,7 +50,7 @@ structure KVCoordinator =
             val fold = List.foldl (fn (a,b) => b ^ " " ^ a) ""
             val () = case ArgumentParser.complainUnused args of
                   nil => ()
-                | x => raise Fail ("Illegal parameters: " ^ fold x)
+                | x => (usage () ; raise Fail ("Illegal parameters: " ^ fold x))
       in
          ( port, size, rate, cooldown, phases, delPhases, phaseDelay, steps, 
            base, managed, keepalive )
