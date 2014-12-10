@@ -1288,29 +1288,20 @@ bool UDP::send(const Address& addr, const void* data, int size)
 	return (checkResult(cusp_udp_send(handle, addr.getHandle(), (void*) data, size)) >= 0);
 }
 
-const void* UDP::recv(Address& addr, int& size)
-{
-	ASSERT_HANDLE(handle);
-	int32_t dataOfs;
-	int32_t dataLen;
-	int32_t addrHandle;
-	const void* data = cusp_udp_recv(handle, &dataOfs, &dataLen, &addrHandle);
-	checkResult(dataLen);
-	if (dataLen > 0) {
-		addr = Address(addrHandle);
-		size = dataLen;
-		return ((uint8_t*) data) + dataOfs;
-	} else {
-		addr = Address();
-		size = 0;
-		return NULL;
-	}
-}
-
-void UDP::dataReadyCallback(void* userData)
+void UDP::dataReadyCallback(void* userData, int addrHandle, const uint8_t* buffer, int ofs, int len)
 {
 	assert(userData);
-	((DataReadyHandler*) userData)->onDataReady();
+#ifndef STACK_ALLOC
+	uint8_t* dataCopy = (uint8_t*) malloc(len);
+#else
+	uint8_t* dataCopy = (uint8_t*) alloca(len);
+#endif
+	assert(dataCopy);
+	memcpy(dataCopy, buffer + ofs, len);
+	((DataReadyHandler*) userData)->onDataReady(Address(addrHandle), dataCopy, len);
+#ifndef STACK_ALLOC
+	free(dataCopy);
+#endif
 }
 
 

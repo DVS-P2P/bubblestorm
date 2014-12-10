@@ -784,8 +784,8 @@ class UDP
 	public:
 		class DataReadyHandler {
 			public:
-			/// Invoked when data is available for read.
-			virtual void onDataReady() = 0;
+			/// Invoked when a datagram is available.
+			virtual void onDataReady(const Address& from, const void* data, int size) = 0;
 		};
 		
 		static UDP create(DataReadyHandler* dataReady);
@@ -811,11 +811,10 @@ class UDP
 		
 		void close();
 		bool send(const Address& addr, const void* data, int size);
-		const void* recv(Address& addr, int& size);
 
 	private:
 		Handle handle;
-		static void dataReadyCallback(void* userData);
+		static void dataReadyCallback(void* userData, int addrHandle, const uint8_t* buffer, int ofs, int len);
 };
 
 };}; // namespace BS::CUSP
