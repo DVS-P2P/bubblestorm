@@ -57,10 +57,16 @@ structure Experiment :> EXPERIMENT =
             (* tune DB *)
             local
                open SQL.Query
-               val settingsQuery = prepare database
-                  "PRAGMA synchronous=OFF; PRAGMA temp_store=MEMORY;" $
+               val settingsQuery1 = prepare database
+                  "PRAGMA synchronous=OFF;" $
+               val settingsQuery2 = prepare database
+                  "PRAGMA journal_mode=MEMORY;" $
+               val settingsQuery3 = prepare database
+                  "PRAGMA temp_store=MEMORY;" $
             in
-               val () = SQL.exec settingsQuery ()
+               val () = SQL.exec settingsQuery1 ()
+               val () = SQL.exec settingsQuery2 ()
+               val () = SQL.exec settingsQuery3 ()
             end
       
             (* load experiment *)
